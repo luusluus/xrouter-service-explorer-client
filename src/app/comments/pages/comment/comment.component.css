@@ -1,0 +1,36 @@
+.comment-header{
+    display:flex;
+    line-height: 1;
+    margin-bottom: 3px;
+}
+
+.comment-header .username{
+    margin-right:auto;
+}
+
+.reply-to-tab img{
+    margin: 0 0.25em;
+}
+.reply-to-tab a{
+    cursor: pointer;
+}
+
+.comment-body{
+    padding: 0 11px 0.25em 0;
+}
+
+.comment-footer{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    line-height: 1;
+    margin: 20px 0;
+}
+
+.actions{
+    margin-left: auto;
+}
+
+.actions a{
+    margin: 0 0.25em;
+}

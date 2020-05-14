@@ -1,0 +1,29 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+.black-80 {
+    color: rgba(0,0,0,.8);
+  }
+  
+  .black-50{
+    color: rgba(0,0,0,.5);
+  }
+  
+  .fw6{
+    font-weight:600;
+  }
+  
+  .f5{
+    font-size: 1rem;
+  }
+
+  .truncate{
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pane{
+    padding: 1em;
+  }

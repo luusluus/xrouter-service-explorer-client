@@ -1,0 +1,22 @@
+<div *ngIf="loading else loaded">
+  Fetching data...
+</div>
+<!--TODO: Make comment component..-->
+<ng-template #loaded>
+  <h2>Comments</h2>
+  <div class="comments">
+    <comment *ngFor="let c of comments"
+    [comment]="c"
+    [nodePubKey]="nodePubKey" 
+    [serviceName]="serviceName" 
+    (newComment)="onNewComment($event)"
+    (deletedComment)="onDeletedComment($event)"
+    >
+    </comment>
+    <comment-new 
+      [nodePubKey]="nodePubKey" 
+      [serviceName]="serviceName" 
+      (newComment)="onNewComment($event)"
+      ></comment-new>
+  </div>
+</ng-template>

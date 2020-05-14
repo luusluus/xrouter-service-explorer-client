@@ -1,0 +1,9 @@
+.footer{
+  background-color: #f5f5f5;
+  /* background-image: url(../../assets/pattern.png);
+  background-repeat: no-repeat;
+  background-size: contain; */
+}
+body {
+  padding-bottom: 70px;
+}

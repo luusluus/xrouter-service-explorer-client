@@ -1,0 +1,112 @@
+<div *ngIf="loading else loaded">
+  Fetching data...
+</div>
+
+<ng-template #loaded>
+    <h1>XCloud Service</h1>
+    <h5>{{ serviceName }}</h5>
+    <my-tabs>
+      <div class="row">
+        <div class="col-9">
+          <my-tab tabTitle="Readme">
+            <h3>{{serviceName}}</h3>
+            <hr>
+            <h6>Description</h6>
+            <p>{{result.service.helpDescription}}</p>
+            <h6>Fee</h6>
+            <p>{{result.service.fee}} BLOCK</p>
+            <div *ngIf="result.service.parameters">
+              <h6>Parameter Types</h6>
+              <p>{{result.service.parameters}}</p>
+            </div>
+            <h6>Usage Instructions Blocknet CLI</h6>
+            <div *ngIf="result.service.parameters; else noParams">
+              <p>xrService {{serviceName}} [{{result.service.parameters}}]</p> 
+            </div>
+            <ng-template #noParams>
+              <p>xrService {{serviceName}}</p>
+            </ng-template>  
+          </my-tab>
+          <my-tab tabTitle="Try it out">
+            <h3>Try it out</h3>
+            <hr>
+            <div *ngIf="result.service.helpDescription">
+              <h6>Help</h6>
+              <p>{{result.service.helpDescription}}</p>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-12">
+                <h4>Request</h4>
+                <form (ngSubmit)="onSubmit()" #serviceForm="ngForm">
+                  <div *ngFor="let p of result.service.parametersList; let i = index">
+                    <div class="form-group">
+                      <label for="param-{{i}}">Param-{{i + 1}} [{{p}}] </label>
+                      <input type="text" class="form-control" id="param-{{i}}" [(ngModel)]="parametervalues[i]" name="param-{{i}}" #params="ngModel" required>
+                    </div>
+                    <div class="form-group">
+                      <div *ngIf="params.invalid && (params.dirty || params.touched)"
+                                class="alert alert-danger">
+                                <div *ngIf="params.errors.required">
+                                        Param-{{i + 1}} is required.
+                                </div>
+                        </div> 
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-outline-primary" [disabled]="serviceForm.form.invalid">Submit</button>
+                </form> 
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <h4>Response</h4>
+                  <pre>
+                    <code>
+                      <div *ngIf="resultLoading else resultLoaded">
+                        Executing...
+                      </div>
+                      <ng-template #resultLoaded>
+                        {{ serviceResult }}
+                      </ng-template>
+                    </code>
+                  </pre>
+              </div>
+            </div>
+            
+          </my-tab>
+          <my-tab tabTitle="Configuration">
+            <h3>Configuration [{{serviceName}}] in xrouter.conf</h3>
+            <hr>
+            <pre>
+              <code>{{result.service.config}}</code>
+            </pre>
+          </my-tab>
+        </div>
+        <div class="col-3">
+          <div class="pane">
+            <h3>Service Node</h3>
+            <hr>
+            <h4 class="black-50 f5">Snode Key</h4>
+            <p>
+              <a class="truncate fw6" [routerLink]="['/xrouter-snodes', result.node.nodePubKey]">{{result.node.nodePubKey}}</a>
+            </p>
+            <!-- <span *ngIf="snodeVerified" class="ml-2 badge badge-secondary" title="This user has verified its ownership of a blocknet service node.">Verified</span> -->
+            <h4 class="black-50 f5">Payment Address</h4>
+            <p>
+              <a class="truncate fw6" href="https://chainz.cryptoid.info/block/address.dws?{{result.node.paymentAddress}}">{{result.node.paymentAddress}}</a>
+            </p>
+            <h4 class="black-50 f5">Type</h4>
+            <p class="black-80 fw6"> {{result.node.type }}</p>
+            <h4 class="black-50 f5">Default Fee</h4>
+            <p class="black-80 fw6">{{result.node.feeDefault}} BLOCK</p>
+          </div>
+        </div>
+      </div>
+      
+    </my-tabs>
+    <hr>
+    <!-- <comments 
+      [nodePubKey]="result.node.nodePubKey"
+      [serviceName]="serviceName"
+    ></comments> -->
+</ng-template>  

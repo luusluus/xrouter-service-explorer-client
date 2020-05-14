@@ -1,0 +1,25 @@
+<form (ngSubmit)="onCommentSubmit()" #commentForm="ngForm">
+  <div class="form-group">
+    <div class="media mb-3">
+      <img src="{{ user.avatarUrl }}" class="mr-3 rounded-circle z-depth-0" width="45" alt="avatar image">
+      <div class="media-body">
+        <div class="form-group">
+          <textarea class="form-control" id="content" name="content" rows="3" cols="100" required="" 
+          placeholder="Post your comment..."
+          [(ngModel)]="commentBody"></textarea>
+        </div>
+        <div class="form-group">
+          <div *ngIf="isUserAuthenticated; else notAuthenticated">
+            <button type="submit" class="btn btn-outline-primary" [disabled]="commentForm.form.invalid">Submit as {{ user.userName }}</button>
+          </div>
+          <ng-template #notAuthenticated>
+            <a class="btn" style="background-color: #7289DA; color:white;" href="javascript:void(0)" (click)="login()">
+              <img src="../../assets/discord-logo-white.png" width="30" alt="">
+              <span class="mb-0 ml-1">Log in with Discord</span>
+            </a>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

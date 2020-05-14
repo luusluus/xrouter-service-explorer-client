@@ -1,0 +1,12 @@
+td{
+    max-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 
+::ng-deep .wide-modal .modal-dialog { 
+    max-width: 60%;
+    width: 60%;
+} */

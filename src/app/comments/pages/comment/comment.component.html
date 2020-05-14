@@ -1,0 +1,79 @@
+<div class="media mb-3">
+    <img src="{{comment.avatarUrl}}" class="mr-3 rounded-circle z-depth-0" width="40" alt="avatar image">
+    <div class="media-body" attr.id ="cmt-{{comment.id}}">
+      <header class="mt-0 comment-header">
+        <div class="username">
+          <h6>{{ comment.userName}} <span *ngIf="comment.verified" class="badge badge-secondary" title="This user has verified its ownership of a blocknet service node.">Verified Service Node</span></h6>
+        </div>
+        <span *ngIf ="comment.parentComment" style="font-size: 1rem!important;" class="text-muted mr-5">
+          <a class="reply-to-tab text-muted" href="javascript:void(0)" (click)="onJump(comment.parentComment.id)">
+            <img src="{{comment.parentComment.avatarUrl}}" class="rounded-circle z-depth-0" width="20" alt="avatar image">
+            <span>{{ comment.parentComment.userName }}</span>
+          </a>
+        </span>  
+        <span *ngIf="comment.dateModified != comment.dateCreated" style="font-size: 1rem!important;" title="Post last edited on {{ comment.dateModified }}" class="text-muted">Edited</span>  
+        <span style="font-size: 1rem!important;" class="text-muted ml-4" title="{{ comment.dateCreated }}">{{ comment.dateCreatedIndication }}</span>  
+      </header>
+      <div class="comment-body">
+        <div *ngIf="!comment.editMode; else editing">
+          <p>{{ comment.body }}</p>
+        </div>
+        <ng-template #editing>
+          <div class="form-group">
+            <textarea class="form-control" id="content" name="content" rows="3" cols="100" required="" 
+            value="{{ comment.body }}"
+            [(ngModel)]="comment.body">
+          </textarea>
+          </div>
+        </ng-template>
+      </div>
+      <footer class="comment-footer">        
+        <div>
+          <a *ngIf="comment.replies.length > 1" data-toggle="collapse" href="#collapseReplies-{{ comment.id }}" role="button" aria-expanded="false" aria-controls="collapseExample">
+            {{ comment.replies.length }} Replies
+          </a>
+          <a *ngIf="comment.replies.length == 1" data-toggle="collapse" href="#collapseReplies-{{ comment.id }}" role="button" aria-expanded="false" aria-controls="collapseExample">
+            {{ comment.replies.length }} Reply
+          </a>
+        </div>
+        <div class="actions">
+          <div *ngIf="!comment.editMode; else editFooter">
+              <div *ngIf="isUserAuthenticated && comment.userId == user.userId; else notAuthenticated">
+                  <a href="javascript:void(0)" (click)="toggleEditComment()">Edit</a>
+                  <a href="javascript:void(0)" (click)="deleteComment()">Delete</a>
+                  <a href="javascript:void(0)" (click)="createCommentReplyComponent()" #replyButton>Reply</a>
+              </div>
+              <ng-template #notAuthenticated>
+                <a href="javascript:void(0)" (click)="createCommentReplyComponent()" #replyButton>Reply</a>
+              </ng-template>
+              
+          </div>            
+          <ng-template #editFooter>
+            <a href="javascript:void(0)" (click)="cancelEditComment()">Cancel</a>
+            <a href="javascript:void(0)" (click)="editComment()">Update</a>
+          </ng-template>
+        </div>            
+      </footer>
+      
+      <ng-template #reply></ng-template>
+        <div class="collapse" id="collapseReplies-{{ comment.id }}">
+          <div class="media mb-3" *ngFor="let r of comment.replies">
+            <img src="{{ r.avatarUrl}}" class="mr-3 rounded-circle z-depth-0" width="45" alt="avatar image">
+            <div class="media-body">
+              <header class="mt-0 comment-header">
+                <div class="username">
+                  <span class="h4">{{ r.userName}}</span>
+                </div>
+                <span style="font-size: 1rem!important;" class="text-muted">
+                  <a href="javascript:void(0)" (click)="onJump(r.id)">Jump</a>
+                </span>  
+              </header>
+              <div class="card card-body">
+                <p>{{ r.body }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      <hr>
+    </div>
+  </div>

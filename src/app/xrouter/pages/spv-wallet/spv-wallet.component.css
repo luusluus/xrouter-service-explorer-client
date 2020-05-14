@@ -1,0 +1,23 @@
+pre{
+    overflow:auto;
+    max-height:50vh;
+    background: #f5f2f0;
+}
+
+pre > code{
+  display: block;
+  padding: 1rem;
+  word-wrap: break-word;
+  white-space: inherit;
+}
+
+.ellipsis{
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+td{
+  vertical-align: middle;
+}

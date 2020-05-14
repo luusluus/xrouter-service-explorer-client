@@ -1,0 +1,102 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Verify Your Servicenode</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+  <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+
+  <p>Follow the steps below to sign a message which proves your ownership of this servicenode.</p>
+  <p>This is a trustless process and does not give any keys to service-explorer</p>
+  <p>Proving ownership this way grants a Verified badge next to your name</p>
+  <hr class="my-4">
+  <mat-vertical-stepper [linear]="isLinear" #stepper>
+  <mat-step>
+    <ng-template matStepLabel>Open Wallet</ng-template>
+    <div>
+      <p>Open the BlocknetDX wallet application</p>
+      <img src="../../assets/openblocknet.png" alt="openblocknet" class="img-thumbnail">
+      <br/>
+      <button type="button" class="btn btn-primary" matStepperNext>Next</button>
+    </div>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Sign Message</ng-template>
+    <div>
+      <p>Click on "File" and then Sign "Message"</p>
+      <img src="../../assets/signmsgclick.png" alt="signmessageclick" class="img-thumbnail">
+      <br/>
+      <button type="button" class="btn btn-primary" matStepperNext>Next</button>
+    </div>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Copy Paste Address</ng-template>
+    <div>
+      <p>Copy this exact address: <strong>{{ servicenode.address }}</strong></p>
+      <p>Paste it into the black box</p>
+      <img src="../../assets/signmsgaddress.png" alt="signmessageaddress" class="img-thumbnail">
+      <br/>
+      <button type="button" class="btn btn-primary" matStepperNext>Next</button>
+    </div>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Copy Paste Message</ng-template>
+    <div>
+      <p>Copy this exact message <strong>{{ toBeSignedMessage }}</strong></p>
+      <p>Paste it into the white box</p>
+      <img src="../../assets/signmsgmsg.png" alt="signmessagemsg" class="img-thumbnail">
+      <br/>
+      <button type="button" class="btn btn-primary" matStepperNext>Next</button>
+    </div>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Sign Message</ng-template>
+    <div>
+      <p>Press the "Sign Message" button</p>
+      <img src="../../assets/signmsgsign.png" alt="signmessagesign" class="img-thumbnail">
+      <br/>
+      <button type="button" class="btn btn-primary" matStepperNext>Next</button>
+    </div>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Copy Signature</ng-template>
+    <div>
+      <p>Press the "Copy" button</p>
+      <img src="../../assets/signmsgcopy.png" alt="signmessagecopy" class="img-thumbnail">
+      <br/>
+      <button type="button" class="btn btn-primary" matStepperNext>Next</button>
+    </div>
+  </mat-step>
+  <mat-step [stepControl]="formGroup">
+    <form [formGroup]="formGroup" (ngSubmit)="onVerifySubmit()" #form="ngForm">
+      <ng-template matStepLabel>Enter signature</ng-template>
+      <p>Copy and paste the signature message into this box and click Verify Servicenode</p>
+        <div class="input-group" style="margin-top: 1%;">
+          <input type="text" class="form-control" placeholder="Signature" formControlName="signature" required>
+            <div class="input-group-append">
+              <button type="submit" class="btn btn-primary" [disabled]="form.pristine || form.invalid">Verify Servicenode</button>
+            </div>
+        </div>
+        {{ f.value }}
+        <div *ngIf="f.signature.invalid && (f.signature.dirty || f.signature.touched)" class="alert alert-danger">
+          <div *ngIf="f.signature.errors.required">
+            Signature is required.
+          </div>
+          <div *ngIf="f.signature.errors.minlength">
+            Signature must be at least 88 characters long.
+          </div>
+        </div>
+        <div *ngIf="submitted && !signatureValidated" class="alert alert-danger">
+            {{ resultMessage }}
+          </div>      
+      <div>
+        <br/>
+        <button type="button" class="btn btn-primary" matStepperPrevious>Back</button>
+      </div>
+    </form>
+  </mat-step>
+</mat-vertical-stepper>
+</div>
+<div class="modal-footer">
+
+</div>

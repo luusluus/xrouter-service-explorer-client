@@ -1,0 +1,136 @@
+<div [class.show]="loading" [class.hide]="!loading">
+        Fetching data...
+</div>
+            
+<div [class.show]="!loading" [class.hide]="loading">
+    <h2>Service Node List</h2>
+    <p>This list displays service nodes that have XRouter enabled.</p>
+    <h4>
+        <span class="badge badge-secondary" *ngIf="serviceNodes?.totalItems == 1; else manyNodes">{{ serviceNodes?.totalItems}} Servicenode</span>
+        <ng-template #manyNodes><span class="badge badge-secondary">{{ serviceNodes?.totalItems}} Servicenodes</span></ng-template>
+        <span class="badge badge-secondary ml-1" *ngIf="serviceNodes?.totalSpvWallets == 1; else manySpv">{{ serviceNodes?.totalSpvWallets}} SPV Wallet</span>
+        <ng-template #manySpv><span class="badge badge-secondary ml-1">{{ serviceNodes?.totalSpvWallets}} SPV Wallets</span></ng-template>
+        <span class="badge badge-secondary ml-1"*ngIf="serviceNodes?.totalXCloudServices == 1; else manyXCloud">{{ serviceNodes?.totalXCloudServices}} XCloud Service</span>
+        <ng-template #manyXCloud><span class="badge badge-secondary ml-1">{{ serviceNodes?.totalXCloudServices}} XCloud Services</span></ng-template>
+    </h4>
+    <div class="form-row align-items-center mb-2">
+        <div class="col-md">
+            <div class="input-group ">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Search</span>
+                </div>
+                <input class="form-control" placeholder="Search by Key or Address" #searchSNode>
+              </div>
+        </div>
+    </div>
+    <div class="form-row align-items-center mb-2">
+        <div class="col-auto">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="type">Type</label>
+                </div>
+                <select id="type" class="form-control" [(ngModel)]="query.type" (change)="onFilterChange()">
+                    <option value=""></option>
+                    <option value="Regular">Regular</option>
+                    <option value="Enterprise">Enterprise</option>
+                </select>  
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="spvWallet">Spv Wallet</label>
+                </div>
+                <select id="spvWallet" class="custom-select" [(ngModel)]="query.spvWallet" (change)="onFilterChange()">
+                    <option value=""></option>
+                    <option *ngFor="let w of spvWallets?.items" value="{{ w.name }}">{{ w.name }}</option>
+                </select>  
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="xCloudService">XCloud Service</label>
+                </div>
+                <select id="xCloudService" class="form-control" [(ngModel)]="query.xCloudService" (change)="onFilterChange()">
+                    <option value=""></option>
+                    <option *ngFor="let xc of xCloudServices?.items" value="{{ xc.name }}">{{ xc.name }}</option>
+                </select>  
+            </div>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-outline-primary" (click)="resetFilter()">Reset</button>
+        </div>
+    </div>
+
+    <div class="table-responsive table-overflow mb-1">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th *ngFor="let c of columns"> {{ c.title }} </th>
+                </tr> 
+            </thead>
+            <tbody>
+                <div *ngIf="querying else queried">
+                    Fetching data...
+                </div>
+                <ng-template #queried>
+                    <tr *ngFor="let sn of serviceNodes?.items; let i = index">
+                        <td>
+                            <a [routerLink]="[sn.sNodeKey]">{{sn.sNodeKey}}</a>
+                        </td>
+                        <td>
+                            <a href="https://chainz.cryptoid.info/block/address.dws?{{sn.address}}">
+                                {{sn.address}}
+                            </a>    
+                        </td>
+                        <td>{{sn.type}}</td>
+                        <td>{{sn.status}}</td>
+                        <td>
+                            <div *ngIf="sn.spvWallets?.length > 0">
+                                <div class="input-group">
+                                    <select id="spvWallets-{{i}}" [(ngModel)]="selectedSpvWallets[i]" name="spvWallets-{{i}}" class="custom-select">
+                                        <option *ngFor="let w of sn.spvWallets; let j = index" [value]="w">{{ w }} </option>
+                                    </select>   
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" (click)="onSpvWalletClick(i)">View</button>
+                                    </div>
+                                </div>
+                            </div> 
+                        </td>
+                        <td>
+                            <div *ngIf = "sn.xCloudServices.length > 0">
+                                <div class="input-group">
+                                    <select id="xcloudServices-{{i}}" [(ngModel)]="selectedXCloudServices[i]" name="xcloudServices-{{i}}" class="custom-select">
+                                        <option *ngFor="let s of sn.xCloudServices; let k = index" [value]="s">{{ s }} </option>
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" (click)="onXCloudServiceClick(i)">View</button>
+                                    </div>   
+                                </div> 
+                            </div>    
+                        </td>
+                    </tr>
+                </ng-template>
+            </tbody>
+        </table>
+    </div>
+    <div class="form-row align-items-center mb-2">
+        <div class="col-auto">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="xCloudService">Items per page</label>
+                </div>
+                <select [(ngModel)]="query.pageSize" class="custom-select" (change)="onFilterChange()">
+                    <option [ngValue]="10">10</option>
+                    <option [ngValue]="25">25</option>
+                    <option [ngValue]="50">50</option>
+                    <option [ngValue]="100">100</option>
+                </select> 
+            </div>   
+        </div>
+        <div class="col-auto ml-auto">
+            <ngb-pagination [collectionSize]="serviceNodes?.totalItems" [maxSize]="5" [pageSize]="query.pageSize" [(page)]="query.page" (pageChange)="onPageChange($event)"></ngb-pagination>
+        </div>
+    </div>
+</div>
