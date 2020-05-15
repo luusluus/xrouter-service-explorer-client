@@ -4,7 +4,7 @@ import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { isNullOrUndefined } from 'util';
 import { NgForm } from '@angular/forms';
 import { finalize, takeUntil } from 'rxjs/operators';
-import { Subject, Observable, forkJoin } from 'rxjs';
+import { Subject, Observable, forkJoin, Subscription } from 'rxjs';
 import { ServiceNodeService } from '../../../snode/shared/services/snode.service';
 import { XCloudService } from '../../shared/services/xcloud.service';
 import { EnterpriseXCloudService } from '../../shared/services/enterprise.xcloud.service';
@@ -12,23 +12,24 @@ import { ServiceRequest } from '../../shared/models/servicerequest.model';
 
 @Component({
   selector: 'app-xcloud-service',
-  templateUrl: './xcloud-service.component.html',
-  styleUrls: ['./xcloud-service.component.css']
+  template:
+  `
+    <app-xcloud-service-details *ngIf="serviceInfo"
+      [serviceName]="serviceName"
+      [nodePubKey]="nodePubKey"
+      [serviceInfo]="serviceInfo"
+      (onXCloudSubmit)="onXCloudSubmit($event)"
+    >
+  `
 })
 export class XCloudServiceComponent implements OnInit, OnDestroy {
   protected ngUnsubscribe: Subject<void> = new Subject<void>();
-  navigationSubscription;
-  loading:boolean = true;
+  navigationSubscription:Subscription;
   serviceName:string;
   nodePubKey:string;
-  result:any;
-  snodeVerified:boolean;
-  parametervalues:string[];
-  active = 1;
+  serviceInfo:any;
+  serviceResult: string;
 
-  @ViewChild('serviceForm') serviceForm: NgForm;
-  serviceResult:any;
-  resultLoading:boolean;
 
   constructor(
     private xcloudService:XCloudService,
@@ -61,31 +62,21 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
     var observableServiceNodeInfo: Observable<any> = this.serviceNodeService.GetServiceInfo(this.serviceName);
 
     forkJoin([observableServiceNodeInfo]).pipe(takeUntil(this.ngUnsubscribe)).subscribe(([serviceInfo]) =>{
-      this.snodeVerified = true;
-      this.result = serviceInfo;
-      this.location.replaceState("/xcloud-services/" + this.serviceName + "/" + this.result.node.nodePubKey);
-      if(this.result.service.parametersList){
-        if(this.result.service.parametersList.length > 0)
-          this.parametervalues = new Array<string>(this.result.service.parametersList.length);
-      }
-
-      this.loading = false;
-      this.resultLoading = false;
-
+      this.serviceInfo = serviceInfo;
+      this.location.replaceState("/xcloud-services/" + this.serviceName + "/" + this.serviceInfo.node.nodePubKey);
     }, err => {
-      if(err.status == 404)
+      // if(err.status == 404)
       this.router.navigate(['/error'], {queryParams: err});
     });
   }
   ngOnInit() {}
 
-  onSubmit() {  
-    this.resultLoading = true; 
-    if(this.result.node.type === "Enterprise")
-      this.enterpriseXCloudService.Service(this.serviceName, this.parametervalues, 'http://' + this.result.node.host + ':' + this.result.node.port)
+  onXCloudSubmit(xCloudInput:any) { 
+    const parametervalues = xCloudInput.parametervalues
+    if(this.serviceInfo.node.type === "Enterprise")
+      this.enterpriseXCloudService.Service(this.serviceName, parametervalues, 'http://' + this.serviceInfo.node.host + ':' + this.serviceInfo.node.port)
       .pipe(
         finalize(() => {
-          this.resultLoading = false;
       }))  
       .subscribe(result => {
           this.serviceResult = JSON.stringify(result, undefined, 2);
@@ -94,10 +85,9 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
           this.serviceResult = JSON.stringify(error, undefined, 2);
         });    
     else
-      this.xcloudService.Service(new ServiceRequest(this.serviceName, this.parametervalues, 1))
+      this.xcloudService.Service(new ServiceRequest(this.serviceName, parametervalues, 1))
       .pipe(
         finalize(() => {
-          this.resultLoading = false;
       }))  
       .subscribe(result => {
           this.serviceResult = JSON.stringify(result, undefined, 2);

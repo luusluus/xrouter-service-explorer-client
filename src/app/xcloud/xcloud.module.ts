@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { XcloudServiceDetailsComponent } from './components/xcloud-service-details/xcloud-service-details.component';
-import { XcloudServiceListComponent } from './components/xcloud-service-list/xcloud-service-list.component';
+import { XCloudServiceDetailsComponent } from './components/xcloud-service-details/xcloud-service-details.component';
 import { XcloudRoutingModule } from './xcloud-routing.module';
 import { XCloudServiceComponent } from './pages/xcloud-service/xcloud-service.component';
 import { XCloudServicesComponent } from './pages/xcloud-services/xcloud-services.component';
@@ -22,8 +21,7 @@ import { EnterpriseXCloudService } from './shared/services/enterprise.xcloud.ser
     TabsModule,
   ],
   declarations: [
-    XcloudServiceDetailsComponent, 
-    XcloudServiceListComponent,
+    XCloudServiceDetailsComponent, 
     XCloudServiceComponent,
     XCloudServicesComponent
   ],
@@ -32,4 +30,4 @@ import { EnterpriseXCloudService } from './shared/services/enterprise.xcloud.ser
     EnterpriseXCloudService
   ]
 })
-export class XcloudModule { }
+export class XCloudModule { }

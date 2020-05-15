@@ -3,6 +3,7 @@ import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 @Component({
   selector: 'service-list',
   template: `
+        <h2>{{ nameList }}</h2>
         <table class="table table-striped">
             <thead>
               <tr>
@@ -37,6 +38,8 @@ export class ServiceListComponent implements OnInit {
   @Input('services') services:any = {};
 
   @Input('query-init') queryInit = {};
+
+  @Input('name-list') nameList:string;
 
   @Output('query-changed') queryChanged = new EventEmitter();
 

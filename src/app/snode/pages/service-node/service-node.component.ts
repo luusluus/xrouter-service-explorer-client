@@ -9,20 +9,23 @@ import { ServiceNodeService } from '../../shared/services/snode.service';
 
 @Component({
   selector: 'app-service-node',
-  templateUrl: './service-node.component.html',
-  styleUrls: ['./service-node.component.css']
+  template: `<app-service-node-details *ngIf="serviceNodeInfo"
+              [nodePubKey]="nodePubKey"
+              [service]="service"
+              [xCloudServices]="xCloudServices"
+              [serviceNodeInfo]="serviceNodeInfo"
+            >`,
+  
 })
 export class ServiceNodeComponent implements OnInit, OnDestroy {
   private readonly PAGE_SIZE = 6; 
 
   protected ngUnsubscribe: Subject<void> = new Subject<void>();
-  loading:boolean;
 
   nodePubKey:string;
   service:string;
   xCloudServices:any;
   serviceNodeInfo:any;
-  snodeVerified:boolean;
 
   query:any = {
     page: 1,
@@ -42,7 +45,6 @@ export class ServiceNodeComponent implements OnInit, OnDestroy {
         router.navigate(['']);
         return; 
       }
-      this.loading = true;
     });
   }
 
@@ -51,8 +53,6 @@ export class ServiceNodeComponent implements OnInit, OnDestroy {
     var observableServiceNodeInfo: Observable<any> = this.serviceNodeService.GetNodeInfo(this.nodePubKey, this.service);
 
     forkJoin([ observableServiceNodeInfo]).pipe(takeUntil(this.ngUnsubscribe)).subscribe(([ nodeInfo]) =>{
-      this.loading = false;
-      this.snodeVerified = true;
       this.serviceNodeInfo = nodeInfo;
     }, err => {
       if(err.status == 404)
@@ -60,12 +60,6 @@ export class ServiceNodeComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
-    // This aborts all HTTP requests.
-    this.ngUnsubscribe.next();
-    // This completes the subject properlly.
-    this.ngUnsubscribe.complete();
-  }
 
   private populateXCloudServices(){
     this.serviceNodeService.FilterXCloudServiceServiceNode(this.query)
@@ -73,29 +67,11 @@ export class ServiceNodeComponent implements OnInit, OnDestroy {
         this.xCloudServices = result;
       });
   }
-
-  ngOnChanges(){
-    this.initializeQuery();
-	}
-
-  onFilterChange() {
-    this.query.page = 1; 
-    this.populateXCloudServices();
+  
+  ngOnDestroy() {
+    // This aborts all HTTP requests.
+    this.ngUnsubscribe.next();
+    // This completes the subject properlly.
+    this.ngUnsubscribe.complete();
   }
-
-  private initializeQuery(){}
-
-  resetFilter() {
-    this.query = {
-      page: 1,
-      pageSize: this.PAGE_SIZE,
-    };
-    this.populateXCloudServices();
-  }
-
-  onPageChange(page) {
-    this.query.page = page;
-    this.populateXCloudServices();
-  }
-
 }

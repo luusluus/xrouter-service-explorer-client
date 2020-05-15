@@ -9,7 +9,7 @@ import { BlocknetCommonModule } from '../blocknet-common/blocknet-common.module'
 import { TabsModule } from '../ui/tabs/tabs.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { XcloudModule } from '../xcloud/xcloud.module';
+import { XCloudModule } from '../xcloud/xcloud.module';
 import { XrouterModule } from '../xrouter/xrouter.module';
 import { ServiceNodeListComponent } from './components/service-node-list/service-node-list.component';
 
@@ -24,7 +24,7 @@ import { ServiceNodeListComponent } from './components/service-node-list/service
     BlocknetCommonModule,
     TabsModule,
     XrouterModule,
-    XcloudModule
+    XCloudModule
   ],
   declarations: [
     ServiceNodeComponent,

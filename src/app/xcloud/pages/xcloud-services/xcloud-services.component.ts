@@ -4,14 +4,21 @@ import { XrouterService } from '../../../xrouter/shared/services/xrouter.service
 
 @Component({
   selector: 'app-xcloud-services',
-  templateUrl: './xcloud-services.component.html',
-  styleUrls: ['./xcloud-services.component.css']
+  template:`
+      <service-list *ngIf="services"
+            [name-list]="nameList"
+              [services]="services" 
+              [query-init]="query"
+              (query-changed)="onQueryChange($event)">
+      </service-list>`
 })
 export class XCloudServicesComponent implements OnInit {
 
   private readonly PAGE_SIZE = 3; 
 
-  services = {};
+  services:any;
+
+  nameList:string = "XCloud Services";
 
   query:any = {
     pageSize: this.PAGE_SIZE,

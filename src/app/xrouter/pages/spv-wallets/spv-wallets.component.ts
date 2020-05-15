@@ -4,25 +4,22 @@ import { XrouterService } from '../../shared/services/xrouter.service';
 
 @Component({
   selector: 'app-spv-wallets',
-  templateUrl: './spv-wallets.component.html',
-  styleUrls: ['./spv-wallets.component.css']
+  template:`<service-list *ngIf="spvWallets"
+              [name-list]="nameList"
+              [services]="spvWallets" 
+              [query-init]="query"
+              (query-changed)="onQueryChange($event)">
+            </service-list>`
 })
 export class SpvWalletsComponent implements OnInit {
 
   private readonly PAGE_SIZE = 3; 
 
-  spvWallets = {};
+  spvWallets:any;
 
-  query:any = {
-    pageSize: this.PAGE_SIZE,
-  };
-  queryPastCourses:any = {
-    pageSize: this.PAGE_SIZE,
-  }; 
-  loading: boolean;
+  nameList:string = "Spv Wallets";
 
   constructor(private router: Router, private xrouterService: XrouterService) { 
-    this.loading = true;
   }
 
   ngOnInit() {
@@ -33,13 +30,6 @@ export class SpvWalletsComponent implements OnInit {
     this.xrouterService.GetNetworkSpvWallets()
       .subscribe(result => {
         this.spvWallets = result;
-        this.loading = false;
       });
   }
-
-  onQueryChange(query){
-    this.query = query;
-    this.populateSpvWallets();
-  }
-
 }

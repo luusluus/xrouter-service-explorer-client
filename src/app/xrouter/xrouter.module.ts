@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SpvWalletDetailsComponent } from './components/spv-wallet-details/spv-wallet-details.component';
-import { SpvWalletListComponent } from './components/spv-wallet-list/spv-wallet-list.component';
 import { SpvWalletsComponent } from './pages/spv-wallets/spv-wallets.component';
 import { SpvWalletComponent } from './pages/spv-wallet/spv-wallet.component';
 import { XrouterService } from './shared/services/xrouter.service';
@@ -25,7 +24,6 @@ import { CustomMinDirective } from './directives/custom-min-validator';
   ],
   declarations: [
     SpvWalletDetailsComponent,
-    SpvWalletListComponent,
     SpvWalletsComponent,
     SpvWalletComponent,
 

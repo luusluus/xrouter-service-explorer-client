@@ -15,7 +15,7 @@ import { CommentsModule } from './comments/comments.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { BlocknetCommonModule } from './blocknet-common/blocknet-common.module';
 import { XrouterModule } from './xrouter/xrouter.module';
-import { XcloudModule } from './xcloud/xcloud.module';
+import { XCloudModule } from './xcloud/xcloud.module';
 import { UtxoModule } from './utxo/utxo.module';
 import { SnodeModule } from './snode/snode.module';
 import { HttpRequestTimeInterceptor } from './interceptors/http-responsetime-logging.interceptor';
@@ -63,7 +63,7 @@ import { RouterModule } from '@angular/router';
     StatisticsModule,
     
     XrouterModule,
-    XcloudModule,
+    XCloudModule,
     SnodeModule,
     UtxoModule,
 
