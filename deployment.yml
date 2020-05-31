@@ -26,7 +26,7 @@ items:
           run: serviceexplorer-client
       spec:
         containers:
-        - image: lucienmartijn/service.explorer.client:v1.1.2
+        - image: lucienmartijn/service.explorer.client:v1.1.14
           imagePullPolicy: Always
           name: serviceexplorer-client
           ports:

@@ -15,6 +15,7 @@
                             <th>Command</th>
                             <th>Fee (BLOCK)</th>
                             <th>Request Limit</th>
+                            <th>Fetch Limit</th>  
                             <!-- <th>Payment Address</th> -->
                             <th>Try it out</th>
                         </tr>
@@ -24,6 +25,7 @@
                             <td class="ellipsis">{{c.command}}</td>
                             <td>{{c.fee}}</td>
                             <td>{{c.requestLimit}}</td>
+                            <td>{{c.fetchLimit}}</td>
                             <!-- <td class="ellipsis">{{c.paymentAddress}}</td> -->
                             <td>  
                               <button class="btn btn-outline-primary" (click)="onSelectTryItOut(c.command)">Try me!</button>
@@ -40,30 +42,37 @@
               <div class="col-12">
                 <h4>Request</h4>
                 <form (ngSubmit)="onSubmit()" #spvCallForm="ngForm">
-                  <label for="spvCommand">Spv Command</label>
-                  <select class="form-control" [(ngModel)]="selectedSpvCommand" name="selectedSpvCommand">
-                      <option *ngFor="let c of spvWalletInfo?.spvConfig?.commands" [value]="c.command">{{c.command}}</option>
-                  </select>
+                  <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                      <label class="input-group-text" for="spvCommand">SPV Command</label>
+                    </div>
+                    <select class="custom-select" [(ngModel)]="selectedSpvCommand" name="selectedSpvCommand">
+                        <option *ngFor="let c of spvWalletInfo?.spvConfig?.commands" [value]="c.command">{{c.command}}</option>
+                    </select>
+                  </div>                  
                   <div [ngSwitch]="selectedSpvCommand">
                     <div *ngSwitchCase="'xrGetBlockCount'">
                     </div>
                     <div *ngSwitchCase="'xrGetBlockHash'">
-                      <div class="form-group">
-                        <label for="blockNumber">Block Number</label>
+                        <div class="input-group mb-3">
+                          <div class="input-group-prepend">
+                            <label class="input-group-text" for="blockNumber">Block Number</label>
+                          </div>  
                         <input type="text" class="form-control" id="blockNumber" ngModel name="blockNumber" #blockNumber="ngModel" required>
-                      </div>
+                        </div>
                         <div class="form-group">
-                          <div *ngIf="blockNumber.invalid && (blockNumber.dirty || blockNumber.touched)"
-                                  class="alert alert-danger">
-                                  <div *ngIf="blockNumber.errors.required">
-                                          Block Number is required.
-                                  </div>
+                          <div *ngIf="blockNumber.invalid && (blockNumber.dirty || blockNumber.touched)" class="alert alert-danger">
+                            <div *ngIf="blockNumber.errors.required">
+                                    Block Number is required.
+                            </div>
                           </div>
                         </div>
                     </div>
                     <div *ngSwitchCase="'xrGetBlock'">
-                      <div class="form-group">
-                        <label for="blockHash">Block Hash</label>
+                      <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                          <label class="input-group-text" for="blockHash">Block Hash</label>
+                        </div>
                         <input type="text" class="form-control" id="blockHash" ngModel name="blockHash" #blockHash="ngModel" required>
                       </div>
                         <div class="form-group">
@@ -76,29 +85,31 @@
                         </div>
                     </div>
                     <div *ngSwitchCase="'xrGetBlocks'">
-                      <h4>Block hash inputs</h4>
-                      <button type="button" (click)="addBlockHash()" class="btn btn-primary btn-sm">Add</button> 
-                      <hr>
+                      <button type="button" (click)="addBlockHash()" class="btn btn-primary btn-sm mb-3">Add Blockhash</button> 
                       <div *ngFor="let bh of blockHashes; let i = index;trackBy:trackByFn">
-                        <div class="form-group">
-                          <label for="blockHash-{{i}}">Blockhash-{{i}}</label>
+                        <div class="input-group mb-3">
+                          <div class="input-group-prepend">
+                            <label class="input-group-text" for="blockHash-{{i}}">Blockhash-{{i+1}}</label>
+                          </div>
                           <input type="text" class="form-control" id="blockHash-{{i}}" [(ngModel)]="blockHashes[i]" name="blockHash-{{i}}" required>
-                        </div>
-                        <div class="form-group">
-                          <div *ngIf="blockHashes.invalid && (blockHashes.dirty || blockHashes.touched)"
-                                  class="alert alert-danger">
-                                  <div *ngIf="blockHashes.errors.required">
-                                          Block Hash is required.
-                                  </div>
+                          <div class="input-group-append">
+                            <button type="button" class="btn btn-danger btn-sm" (click)="removeBlockHash(i)">Remove</button>
                           </div>
                         </div>
-                        <button type="button" class="btn btn-danger btn-sm" (click)="removeBlockHash(i)">Remove</button>
+                        <div class="form-group">
+                          <div *ngIf="blockHashes.invalid && (blockHashes.dirty || blockHashes.touched)" class="alert alert-danger">
+                              <div *ngIf="blockHashes.errors.required">
+                                      Block Hash is required.
+                              </div>
+                          </div>
+                        </div>
                       </div>
-                      <hr>
                     </div>
                     <div *ngSwitchCase="'xrGetTransaction'">
-                      <div class="form-group">
-                        <label for="txid">Txid</label>
+                      <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                          <label class="input-group-text" for="txid">TxId</label>
+                        </div>
                         <input type="text" class="form-control" id="txid" ngModel name="txid" #txid="ngModel" required>
                       </div>
                       <div class="form-group">
@@ -111,29 +122,32 @@
                       </div>
                     </div>
                     <div *ngSwitchCase="'xrGetTransactions'">
-                      <h4>TxId inputs</h4>
-                      <button type="button" (click)="addTxId()" class="btn btn-primary btn-sm">Add</button> 
-                      <hr>
+                      <button type="button" (click)="addTxId()" class="btn btn-primary btn-sm mb-3">Add TxId</button> 
                         <div *ngFor="let txid of txIds; let i = index;trackBy:trackByFn">
-                          <div class="form-group">
-                            <label for="txid-{{i}}">txid-{{i}}</label>
+                          <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                              <label class="input-group-text" for="txid-{{i}}">TxId-{{i+1}}</label>
+                            </div>
                             <input type="text" class="form-control" id="txid-{{i}}" [(ngModel)]="txIds[i]" name="txid-{{i}}" #txids="ngModel" required>
-                          </div>
-                          <div class="form-group">
-                            <div *ngIf="txids.invalid && (txids.dirty || txids.touched)"
-                                    class="alert alert-danger">
-                                    <div *ngIf="txids.errors.required">
-                                            TxId is required.
-                                    </div>
+                            <div class="input-group-append">
+                              <button type="button" class="btn btn-danger btn-sm" (click)="removeTxId(i)">Remove</button>
                             </div>
                           </div>
-                          <button type="button" class="btn btn-danger btn-sm" (click)="removeTxId(i)">Remove</button>
+                          <div class="form-group">
+                            <div *ngIf="txids.invalid && (txids.dirty || txids.touched)" class="alert alert-danger">
+                                <div *ngIf="txids.errors.required">
+                                        TxId is required.
+                                </div>
+                            </div>
+                          </div>
                         </div>
                       <hr>
                     </div>
                     <div *ngSwitchCase="'xrDecodeRawTransaction'">
-                      <div class="form-group">
-                        <label for="txHex">Tx Hex</label>
+                      <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                          <label class="input-group-text" for="txHex">Tx Hex</label>
+                        </div>
                         <input type="text" class="form-control" id="txHex" ngModel name="txHex" #txHex="ngModel" required>
                       </div>
                       <div class="form-group">
@@ -146,32 +160,32 @@
                       </div>
                     </div>
                     <div *ngSwitchCase="'xrSendTransaction'">
-                      <div class="form-group">
-                        <label for="signedTx">Signed Tx</label>
+                      <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                          <label class="input-group-text" for="signedTx">Signed Tx</label> 
+                        </div>
                         <input type="text" class="form-control" id="signedTx" ngModel name="signedTx" #signedTx="ngModel" required>
                       </div>
                       <div class="form-group">
-                        <div *ngIf="signedTx.invalid && (signedTx.dirty || signedTx.touched)"
-                                class="alert alert-danger">
-                                <div *ngIf="signedTx.errors.required">
-                                        Signed Tx is required.
-                                </div>
+                        <div *ngIf="signedTx.invalid && (signedTx.dirty || signedTx.touched)" class="alert alert-danger">
+                            <div *ngIf="signedTx.errors.required">
+                                    Signed Tx is required.
+                            </div>
                         </div>
                       </div>
                     </div>
                   </div> 
-                  <div *ngIf="spvWalletInfo?.node?.type != 'Enterprise'">
-                    <div class="form-group">
-                      <label for="nodeCount">Node count</label>
-                      <input type="number" class="form-control" id="nodeCount"  [(ngModel)]="nodeCount" name="nodeCount" [customMin]="minNodeCount" #nodecount="ngModel" required>
+                  <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                      <label class="input-group-text" for="nodeCount">Node count</label>
                     </div>
-                    <div class="form-group">
-                      <div *ngIf="nodecount.errors?.customMin" class="alert alert-danger"> 
-                        Minimum node count is {{minNodeCount}}.
-                      </div>   
-                    </div>
+                    <input type="number" class="form-control" id="nodeCount" [(ngModel)]="nodeCount" name="nodeCount" min="1" [disabled]="callEXRDirectly">
                   </div>
-                  <button type="submit" class="btn btn-outline-primary" [disabled]="spvCallForm.form.invalid">Submit</button>
+                  <!-- <div class="custom-control custom-checkbox mb-3" *ngIf="spvWalletInfo?.node?.type == 'Enterprise'">
+                    <input type="checkbox" class="custom-control-input" name="exrCheck" id="exrCheck" [(ngModel)]="callEXRDirectly">
+                    <label class="custom-control-label" for="exrCheck">Call directly to EXR service node</label>
+                  </div> -->
+                  <button type="submit" class="btn btn-primary" [disabled]="spvCallForm.form.invalid">Submit</button>
                 </form>
               </div>
             </div>
@@ -194,7 +208,6 @@
         </my-tab>
         <my-tab tabTitle="Offered by other nodes">
           <h3>Other Service Nodes that offer {{shortSpvWalletName}} SPV</h3>
-          <hr>
           <div *ngIf="spvWalletInfo?.otherNodes?.length == 0 else notEmpty">
             There are no other service nodes supporting {{shortSpvWalletName}} SPV.
           </div>
@@ -206,36 +219,23 @@
                   <tr>
                     <th>Snode Key</th>
                     <th>Type</th>
+                    <th>Score</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let s of spvWalletInfo?.otherNodes">
-                    <td class="ellipsis"><a [routerLink]="['/spv-wallets', spvWalletName, s.nodePubKey]">{{s.nodePubKey}}</a></td>
+                    <td class="ellipsis"><a [routerLink]="['/spv-wallets/nodes', spvWalletName, s.nodePubKey]">{{s.nodePubKey}}</a></td>
                     <td>{{s.type}}</td>
+                    <td>{{s.score}}</td>
                   </tr>
                 </tbody>
               </table>
-            </div>
+            </div>     
           </ng-template>
         </my-tab>
       </div>
       <div class="col-3">
-        <div class="pane">
-          <h3>Service Node</h3>
-          <hr>
-          <h4 class="black-50 f5">Snode Key</h4>
-          <p>
-            <a class="truncate fw6" [routerLink]="['/xrouter-snodes', spvWalletInfo?.node.nodePubKey]">{{spvWalletInfo?.node.nodePubKey}}</a>
-          </p>
-          <h4 class="black-50 f5">Payment Address</h4>
-          <p>
-            <a class="truncate fw6" href="https://chainz.cryptoid.info/block/address.dws?{{spvWalletInfo?.node.paymentAddress}}">{{spvWalletInfo?.node.paymentAddress}}</a>
-          </p>
-          <h4 class="black-50 f5">Type</h4>
-          <p class="black-80 fw6"> {{spvWalletInfo?.node.type }}</p>
-          <h4 class="black-50 f5">Default Fee</h4>
-          <p class="black-80 fw6">{{spvWalletInfo?.node.feeDefault}} BLOCK</p>
-        </div>
+        <app-snode-info-block [snodeInfo]="spvWalletInfo.node"></app-snode-info-block>
       </div>
     </div>
   </my-tabs>

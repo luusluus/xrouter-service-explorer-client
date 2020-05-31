@@ -16,10 +16,10 @@ export class NavigatorService{
   }
 
   spvWalletDetails(name: string) {
-    this.go('/spv-wallets/' + name);
+    this.go('/spv-wallets/nodes/' + name);
   }
 
   xCloudServiceDetails(name: string) {
-    this.go('/xcloud-services/' + name);
+    this.go('/xcloud-services/nodes/' + name);
   }
 }

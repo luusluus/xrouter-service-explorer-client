@@ -4,9 +4,9 @@ import { HttpClient , HttpParams} from '@angular/common/http';
 import { BaseService } from '../../../shared/services/base.service';
 import { environment } from '../../../../environments/environment';
 
-
-
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class XrouterService extends BaseService{
   private readonly apiEndpoint = environment.xrApiUrl;
 
@@ -19,17 +19,17 @@ export class XrouterService extends BaseService{
     return this.http.get(_URL);
   }
 
-  getAllServices(){
-    return this.http.get(this.apiEndpoint + '/getAllServices');
-  }
+  // getAllServices(){
+  //   return this.http.get(this.apiEndpoint + '/getAllServices');
+  // }
 
   GetNetworkServices(){
     return this.http.get(this.apiEndpoint + '/getNetworkServices');
   }
 
-  GetNetworkSpvWallets(){
-    return this.http.get(this.apiEndpoint + '/getNetworkSpvWallets');
-  }
+  // GetNetworkSpvWallets(){
+  //   return this.http.get(this.apiEndpoint + '/getNetworkSpvWallets');
+  // }
 
   GetBlockCount(token:string, node_count:number = 1){
     let url = this.apiEndpoint + '/GetBlockCount';
@@ -68,8 +68,8 @@ export class XrouterService extends BaseService{
     return this.http.post(url, {token: token, txHex: txHex, nodeCount: node_count});
   }
 
-  SendTransaction(request:any){
+  SendTransaction(token:string, signedTx:string, node_count:number = 1){
     let url = this.apiEndpoint + '/SendTransaction';
-    return this.http.post(url, request);
+    return this.http.post(url, {token: token, signedTx: signedTx, nodeCount: node_count});
   }
 }

@@ -10,21 +10,29 @@ export class XCloudServiceDetailsComponent implements OnInit, OnChanges {
   @Input() serviceName:string;
   @Input() nodePubKey:string;
   @Input() serviceInfo:any;
+  @Input() serviceResult:any;
   @Output() onXCloudSubmit = new EventEmitter();
 
   executing: boolean;
+  callEXRDirectly: boolean = false;
+  shortServiceName: any;
 
   constructor() { }
 
   
   @ViewChild('serviceForm') serviceForm: NgForm;
   parametervalues:string[];
-  serviceResult:any;
 
   ngOnInit() {
+    this.shortServiceName = this.serviceName.replace("xrs::", "");
+
     if(this.serviceInfo.service.parametersList){
       if(this.serviceInfo.service.parametersList.length > 0)
         this.parametervalues = new Array<string>(this.serviceInfo.service.parametersList.length);
+    }
+
+    if(this.serviceInfo.node.type == 'Enterprise'){
+      // this.callEXRDirectly = true;
     }
   }
   
@@ -36,7 +44,8 @@ export class XCloudServiceDetailsComponent implements OnInit, OnChanges {
     this.executing = true;
     this.onXCloudSubmit.emit(
       {
-        parameterValues:this.parametervalues
+        parameterValues:this.parametervalues,
+        callEXRDirectly:this.callEXRDirectly
       }
     );
   }

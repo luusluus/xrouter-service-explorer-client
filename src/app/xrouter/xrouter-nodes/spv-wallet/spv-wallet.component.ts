@@ -8,17 +8,23 @@ import { finalize, takeUntil } from 'rxjs/operators';
 import { forkJoin, Observable, Subject, Subscription } from 'rxjs';
 import { EnterpriseXRouterService } from '../../shared/services/enterprise.xrouter.service';
 import { ServiceNodeService } from '../../../snode/shared/services/snode.service';
-import { SpvWalletInfo } from '../../shared/models/spvWalletInfo.model';
-
+import { SpvWalletInfo } from '../../../snode/shared/models/spvWalletInfo.model';
+import { LoadingService } from '../../../ui/spinner/shared/services/loading.service';
+import { BreadcrumbsService} from '../../../ui/breadcrumb/breadcrumbs.service';
 @Component({
   selector: 'app-spv-wallet',
-  template:`<app-spv-wallet-details *ngIf="spvWalletInfo"
-              [spvWalletInfo]="spvWalletInfo"
-              [spvWalletName]="spvWalletName"
-              [nodePubKey]="nodePubKey"
-              [spvWalletCommandResult]="spvWalletCommandResult"
-              (onSPVSubmit)="onSPVSubmit($event)"
-            >`
+  template:`
+                <div *ngIf="!spvWalletInfo">
+                  Loading...
+                </div> 
+                <div *ngIf="spvWalletInfo">
+                  <app-spv-wallet-details *ngIf="spvWalletInfo"
+                    [spvWalletInfo]="spvWalletInfo"
+                    [spvWalletName]="spvWalletName"
+                    [nodePubKey]="nodePubKey"
+                    [spvWalletCommandResult]="spvWalletCommandResult"
+                    (onSPVSubmit)="onSPVSubmit($event)">
+            `
 })
 export class SpvWalletComponent implements OnInit, OnDestroy {
   protected ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -26,53 +32,65 @@ export class SpvWalletComponent implements OnInit, OnDestroy {
   
   spvWalletInfo:SpvWalletInfo;
 
-  enterprise:boolean = false;
-
   spvWalletName: string;
   nodePubKey: string;
   resultLoading: boolean;
   spvWalletCommandResult: string;
 
+  breadcrumbs:any[];
+
   constructor(
     private xrouterApiService:XrouterService,
     private enterpriseXrouterApiService:EnterpriseXRouterService,
     private router:Router,
-    private route:ActivatedRoute, 
-    private location:Location,
-    private serviceNodeService : ServiceNodeService
+    private route:ActivatedRoute,
+    private serviceNodeService : ServiceNodeService,
+    private breadcrumbsService:BreadcrumbsService
     ) 
     { 
       this.route.params.subscribe(p => {
         this.spvWalletName = p['name'];
-        this.nodePubKey = p['nodePubKey'];
+        this.nodePubKey = p['breadcrumb'];
         if (isNullOrUndefined(this.spvWalletName)) {
           router.navigate(['']);
           return; 
         }
       });
 
+      // this.router.routeReuseStrategy.shouldReuseRoute = function(){
+      //   return false;
+      // };
+
       this.navigationSubscription = this.router.events.subscribe((e:any) => {
         if(e instanceof NavigationEnd){
           this.initializeData();
         }
       });
+
+      this.breadcrumbsService.get().subscribe(breadcrumbs => this.breadcrumbs = breadcrumbs);
     }
 
   private initializeData(){
-    // var observableIsServiceNodeVerified: Observable<boolean> = this.myServiceNodesService.isServiceNodeVerified(this.nodePubKey);
-    var observableServiceNodeInfo: Observable<any> = this.serviceNodeService.GetSpvWalletInfo(this.spvWalletName, this.nodePubKey);
-
-    forkJoin([observableServiceNodeInfo]).pipe(takeUntil(this.ngUnsubscribe)).subscribe(([ spvWalletInfo]) =>{
+    console.log(this.nodePubKey)
+    this.serviceNodeService.GetSpvWalletInfo(this.spvWalletName, this.nodePubKey).subscribe(spvWalletInfo =>{
       this.spvWalletInfo = spvWalletInfo;
-      this.location.replaceState("/spv-wallets/" + this.spvWalletName + "/" + this.spvWalletInfo.node.nodePubKey);
-
     }, err => {
-      // if(err.status == 404)
-        this.router.navigate(['/error'], {queryParams: err});
+      this.router.navigate(['/error'], {queryParams: err});
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+      this.breadcrumbsService.store([
+        this.breadcrumbs[0], 
+        this.breadcrumbs[1], 
+        {
+          label: this.spvWalletName, 
+          url:this.breadcrumbs[1].url + '/nodes/' + this.spvWalletName, 
+          params:[]
+        }, 
+        this.breadcrumbs[2]]
+      );
+  }
 
   private callXrouterCommand(callback:Observable<object>){
     callback.pipe(
@@ -91,61 +109,62 @@ export class SpvWalletComponent implements OnInit, OnDestroy {
     const form = spvParameters.form as NgForm;
     const nodecount = spvParameters.nodeCount;
     const enterpriseXRouterEndpoint = 'http://' + this.spvWalletInfo.node.host + ':' + this.spvWalletInfo.node.port;
+    const enterprise = spvParameters.callEXRDirectly;
     switch(form.value.selectedSpvCommand){
       case "xrGetBlockCount":{  
-        if(this.enterprise) 
+        if(enterprise) 
           this.callXrouterCommand(this.enterpriseXrouterApiService.GetBlockCount(this.spvWalletName, enterpriseXRouterEndpoint));
         else
           this.callXrouterCommand(this.xrouterApiService.GetBlockCount(this.spvWalletName, nodecount));
         break;    
       }
       case "xrGetBlockHash":{
-        if(this.enterprise) 
+        if(enterprise) 
           this.callXrouterCommand(this.enterpriseXrouterApiService.GetBlockHash(this.spvWalletName, form.value.blockNumber, enterpriseXRouterEndpoint));
         else 
           this.callXrouterCommand(this.xrouterApiService.GetBlockHash(this.spvWalletName, form.value.blockNumber, nodecount));        
         break;
       }
       case "xrGetBlock":{
-        if(this.enterprise) 
+        if(enterprise) 
           this.callXrouterCommand(this.enterpriseXrouterApiService.GetBlock(this.spvWalletName, form.value.blockHash, enterpriseXRouterEndpoint));
         else
           this.callXrouterCommand(this.xrouterApiService.GetBlock(this.spvWalletName, form.value.blockHash, nodecount));
         break;
       }
       case "xrGetBlocks":{
-        if(this.enterprise) 
+        if(enterprise) 
           this.callXrouterCommand(this.enterpriseXrouterApiService.GetBlocks(this.spvWalletName, spvParameters.blockHashes, enterpriseXRouterEndpoint));
         else
           this.callXrouterCommand(this.xrouterApiService.GetBlocks(this.spvWalletName, spvParameters.blockHashes, nodecount));
         break;
       }
       case "xrGetTransaction":{
-        if(this.enterprise) 
+        if(enterprise) 
           this.callXrouterCommand(this.enterpriseXrouterApiService.GetTransaction(this.spvWalletName, form.value.txid, enterpriseXRouterEndpoint));
         else
           this.callXrouterCommand(this.xrouterApiService.GetTransaction(this.spvWalletName, form.value.txid, nodecount));
         break;
       }
       case "xrGetTransactions":{
-        if(this.enterprise) 
+        if(enterprise) 
           this.callXrouterCommand(this.enterpriseXrouterApiService.GetTransactions(this.spvWalletName, spvParameters.txIds, enterpriseXRouterEndpoint));
         else
           this.callXrouterCommand(this.xrouterApiService.GetTransactions(this.spvWalletName, spvParameters.txIds, nodecount));
         break;
       }
       case "xrDecodeRawTransaction":{
-        if(this.enterprise) 
+        if(enterprise) 
           this.callXrouterCommand(this.enterpriseXrouterApiService.DecodeRawTransaction(this.spvWalletName, form.value.txHex, enterpriseXRouterEndpoint));
         else
           this.callXrouterCommand(this.xrouterApiService.DecodeRawTransaction(this.spvWalletName, form.value.txHex, nodecount))        
         break;
       }
       case "xrSendTransaction":{
-        if(this.enterprise) 
+        if(enterprise) 
           this.callXrouterCommand(this.enterpriseXrouterApiService.SendTransaction(this.spvWalletName, form.value.signedTx, enterpriseXRouterEndpoint));
         else
-          this.callXrouterCommand(this.xrouterApiService.SendTransaction({blockchain: this.spvWalletName, signedTx: form.value.signedTx, nodeCount: nodecount}));
+          this.callXrouterCommand(this.xrouterApiService.SendTransaction(this.spvWalletName, form.value.signedTx, nodecount));
         break;
       }
     }

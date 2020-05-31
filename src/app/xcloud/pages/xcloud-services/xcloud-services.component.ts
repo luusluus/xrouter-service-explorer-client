@@ -1,16 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { XrouterService } from '../../../xrouter/shared/services/xrouter.service';
+import { LoadingService } from '../../../ui/spinner/shared/services/loading.service';
 
 @Component({
   selector: 'app-xcloud-services',
   template:`
-      <service-list *ngIf="services"
-            [name-list]="nameList"
-              [services]="services" 
-              [query-init]="query"
-              (query-changed)="onQueryChange($event)">
-      </service-list>`
+              <div *ngIf="!services">
+                Loading...
+              </div> 
+              <div *ngIf="services">
+                <service-list 
+                      [name-list]="nameList"
+                        [services]="services" 
+                        [query-init]="query"
+                        (query-changed)="onQueryChange($event)">
+                </service-list>
+              </div>`
 })
 export class XCloudServicesComponent implements OnInit {
 
@@ -23,13 +29,10 @@ export class XCloudServicesComponent implements OnInit {
   query:any = {
     pageSize: this.PAGE_SIZE,
   };
-  queryPastCourses:any = {
-    pageSize: this.PAGE_SIZE,
-  }; 
-  loading: boolean;
 
-  constructor(private router: Router, private xrouterService: XrouterService) { 
-    this.loading = true;
+  constructor(
+    private xrouterService: XrouterService) { 
+    
   }
 
   ngOnInit() {
@@ -38,9 +41,13 @@ export class XCloudServicesComponent implements OnInit {
 
   private populateServices(){
     this.xrouterService.GetNetworkServices()
-      .subscribe(result => {
-        this.services = result;
-        this.loading = false;
+      .subscribe(svc => {
+
+        let nc = svc["nodeCounts"]
+        
+        this.services = Object.keys(nc)
+          .filter(key => key.includes('xrs::'))
+          .reduce( (res, key) => (res[key] = nc[key], res), {} );
       });
   }
 

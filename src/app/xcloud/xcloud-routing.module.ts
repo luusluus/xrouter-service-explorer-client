@@ -1,16 +1,21 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { XCloudServicesComponent } from './pages/xcloud-services/xcloud-services.component';
-import { XCloudServiceComponent } from './pages/xcloud-service/xcloud-service.component';
 
 const routes : Routes = [
-  { path: 'xcloud-services', component: XCloudServicesComponent, runGuardsAndResolvers: 'always' },
-  { path: 'xcloud-services/:name', component: XCloudServiceComponent, runGuardsAndResolvers: 'always' },
-  { path: 'xcloud-services/:name/:nodePubKey', component: XCloudServiceComponent, runGuardsAndResolvers: 'always' },
+  { 
+    path: '', 
+    component: XCloudServicesComponent, 
+    runGuardsAndResolvers: 'always',
+  },
+  { 
+    path: 'nodes', 
+    loadChildren: './xcloud-nodes/xcloud-nodes.module#XcloudNodesModule', 
+  }
 ];
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes)
+    RouterModule.forChild(routes)
   ],
   exports: [RouterModule],
   declarations: []

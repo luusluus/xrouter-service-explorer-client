@@ -4,7 +4,9 @@ import { BaseService } from '../../../shared/services/base.service';
 import { environment } from '../../../../environments/environment';
 
 
-@Injectable()
+@Injectable({ 
+  providedIn: 'root'
+})
 export class XCloudService extends BaseService{
   private readonly apiEndpoint = environment.xrsApiUrl;
 

@@ -3,16 +3,24 @@ import { HttpClient , HttpParams} from '@angular/common/http';
 import { isNullOrUndefined } from 'util';
 import { BaseService } from '../../../shared/services/base.service';
 import { environment } from '../../../../environments/environment';
+import { SpvWalletInfo} from '../models/spvWalletInfo.model';
 
 
-
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ServiceNodeService extends BaseService{
   private readonly apiEndpoint = environment.snodeApiUrl;
 
   constructor(private http:HttpClient) {
     super();
    }
+
+  GetNodesByService(service:string, node_count:number = 1){
+    let url = this.apiEndpoint + '/GetNodesByService/?service=' + service;
+    url += '&node_count=' + node_count;
+    return this.http.get(url);
+  }
 
   GetServiceInfo(service: string, nodePubKey?: string, node_count:number = 1){
     let url = this.apiEndpoint + '/GetServiceInfo/?service=' + service;
@@ -29,7 +37,7 @@ export class ServiceNodeService extends BaseService{
       url += '&nodePubKey=' + nodePubKey;
     }
     url += '&node_count=' + node_count;
-    return this.http.get(url);
+    return this.http.get<SpvWalletInfo>(url);
   }
 
   GetNodeInfo(nodePubKey:string, service?:string, node_count:number = 1){

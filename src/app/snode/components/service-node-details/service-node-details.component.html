@@ -50,8 +50,8 @@
           <h3>Spv Wallets offered by this Service Node</h3>  
             <table class="table table-striped">
                 <tbody>
-                  <tr *ngFor="let s of serviceNodeInfo?.spvWallets">
-                    <td><a [routerLink]="['/spv-wallets', 'xr::' + s, nodePubKey]">{{s}}</a></td>
+                  <tr *ngFor="let spvWallet of serviceNodeInfo?.spvWallets">
+                    <td><a [routerLink]="['/spv-wallets', 'xr::' + spvWallet, nodePubKey]">{{spvWallet}}</a></td>
                   </tr>
                 </tbody>
             </table>
@@ -73,8 +73,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                      <tr *ngFor="let s of serviceNodeInfo?.services">
-                        <td><a [routerLink]="['/xcloud-services', 'xrs::' + s]">{{s}}</a></td>
+                      <tr *ngFor="let service of serviceNodeInfo?.services">
+                        <td><a [routerLink]="['/xcloud-services', 'xrs::' + service, nodePubKey]">{{service}}</a></td>
                       </tr>
                     </tbody>
                 </table>

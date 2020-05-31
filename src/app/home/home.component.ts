@@ -16,23 +16,22 @@ export class HomeComponent implements OnInit{
     )
     {}
   networkServiceCount:any;
-  xCloudServices:any;
-  spvWallets:any;
+  xCloudServiceCount:any;
+  spvWalletCount:any;
   enterpriseXRouterNodeCount:any;
 
   ngOnInit(): void {
    var sources = [
      this.statsService.GetServiceNodeCount(),
      this.xrouterService.GetNetworkServices(),
-     this.xrouterService.GetNetworkSpvWallets(),
-     this.statsService.GetEnterpriseXRouterCount()
+    //  this.statsService.GetEnterpriseXRouterCount()
    ];
 
    forkJoin(sources).subscribe(data =>{
       this.networkServiceCount = data[0];
-      this.xCloudServices = data[1];
-      this.spvWallets = data[2];
-      this.enterpriseXRouterNodeCount = data[3];
+      this.xCloudServiceCount = data[1]["services"].length
+      this.spvWalletCount = data[1]["spvWallets"].length
+      
     }, err => {
       if(err.status == 404)
         this.router.navigate(['']);

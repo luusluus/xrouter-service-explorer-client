@@ -1,4 +1,5 @@
 import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'service-list',
@@ -23,17 +24,20 @@ import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let c of services.items">
-                <td><a [routerLink]="[c.name]">{{c.name}}</a></td>
-                <td>{{c.nodeCount}}</td>
+              <tr *ngFor="let c of services | keyvalue:keepOriginalOrder">
+                <td><a [routerLink]="['nodes', c.key]">{{c.key}}</a></td>
+                <td>{{c.value}}</td>
               </tr>
             </tbody>
           </table>
   `
 })
+
 export class ServiceListComponent implements OnInit {
 
   private readonly PAGE_SIZE = 3; 
+
+  public keepOriginalOrder = (a, b) => a.key
 
   @Input('services') services:any = {};
 
@@ -53,7 +57,7 @@ export class ServiceListComponent implements OnInit {
     {}
   ];
   
-  constructor() { }
+  constructor(private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.initializeQuery();

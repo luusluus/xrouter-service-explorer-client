@@ -9,7 +9,12 @@ import { ServiceNodeService } from '../../shared/services/snode.service';
 
 @Component({
   selector: 'app-service-node',
-  template: `<app-service-node-details *ngIf="serviceNodeInfo"
+  template: 
+        `<div *ngIf="!serviceNodeInfo">
+          Loading...
+        </div> 
+        <div *ngIf="serviceNodeInfo">
+          <app-service-node-details
               [nodePubKey]="nodePubKey"
               [service]="service"
               [xCloudServices]="xCloudServices"
@@ -39,7 +44,7 @@ export class ServiceNodeComponent implements OnInit, OnDestroy {
   ) 
   { 
     this.route.params.subscribe(p => {
-      this.nodePubKey = p['nodePubKey'];
+      this.nodePubKey = p['breadcrumb'];
       this.service = p['service'];
       if (isNullOrUndefined(this.nodePubKey)) {
         router.navigate(['']);

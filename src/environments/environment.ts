@@ -8,5 +8,6 @@ export const environment = {
   xrApiUrl: 'http://localhost:8082/api/xr',
   xrsApiUrl: 'http://localhost:8081/api/xrs',
   snodeApiUrl: 'http://localhost:8084/api/servicenode',
-  statisticsApiUrl:'http://localhost:8083/api/stats'
+  statisticsApiUrl:'http://localhost:8083/api/stats',
+  blocknetWalletApiUrl:'http://localhost:8085/api/blocknet'
 };

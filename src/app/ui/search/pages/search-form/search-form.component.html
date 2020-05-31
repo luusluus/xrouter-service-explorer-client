@@ -1,18 +1,24 @@
-<ng-autocomplete
-  [data]="services?.items"
+<ng-autocomplete #auto
+  [data]="nodeCounts"
   [searchKeyword]="keyword"
   debounceTime = "400"
   placeHolder="Search services and SPV wallets..."
   (selected)='selectEvent($event)'
   (inputChanged)='onChangeSearch($event)'
   (inputFocused)='onFocused($event)'
-  historyIdentifier="services?.items"
   [itemTemplate]="itemTemplate"
-  [notFoundTemplate]="notFoundTemplate">
+  [notFoundTemplate]="notFoundTemplate"
+  [isLoading]="isLoading"
+  (opened)="onOpened($event)"
+  >
 </ng-autocomplete>
+<!-- historyIdentifier="services?.items" -->
 
 <ng-template #itemTemplate let-item>
-  <a [innerHTML]="item.name"></a>
+  <div class="item">
+    <span [innerHTML]="item.name"></span> &nbsp; | &nbsp;
+    <small>Node count: {{item.nodeCount}}</small>
+  </div>
 </ng-template>
 
 <ng-template #notFoundTemplate let-notFound>

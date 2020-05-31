@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -19,24 +19,28 @@ import { XrouterService } from '../../../../xrouter/shared/services/xrouter.serv
   templateUrl: './search-form.component.html',
   styleUrls: ['./search-form.component.css']
 })
-export class SearchFormComponent extends BaseService implements OnInit {
+export class SearchFormComponent extends BaseService {
   constructor(
     private xrouterService: XrouterService,
     private navigatorService: NavigatorService,
   ) {
     super();
-  }
-
-  keyword = 'name';
-  services:any;
- 
-  ngOnInit(){
-    this.xrouterService.getAllServices().subscribe(
-      res => {
-        this.services = res;
+      this.xrouterService.GetNetworkServices().subscribe(
+      data => {
+        let temp = data["nodeCounts"];
+        this.nodeCounts = Object.keys(temp).map(i => {
+          return {name: i, nodeCount: temp[i]}
+        });
       }
     )
   }
+
+  @ViewChild('auto') auto;
+
+  keyword = 'name';
+  public nodeCounts:any;
+  isLoading = false;
+ 
   selectEvent(item) {
     let service = item.name as string;
     if(service.includes("xrs::")){
@@ -44,23 +48,38 @@ export class SearchFormComponent extends BaseService implements OnInit {
     } else{
       this.navigatorService.spvWalletDetails(service);
     }
-    // do something with selected item
+    
   }
  
   onChangeSearch(val: string) {
-    // this.http.get(this.baseEndpoint + this.apiEndpoint + "/?searchString=" + val).subscribe(
-      this.xrouterService.search(val).subscribe(
+    this.isLoading = true;
+    this.xrouterService.search(val).subscribe(
       data => {
-        this.services = data;
+        let temp = data["nodeCounts"];
+        this.nodeCounts = Object.keys(temp).map(i => {
+          return {name: i, nodeCount: temp[i]}
+        });
+        this.isLoading = false;
       }
-    );
+  );
     // fetch remote data from here
     // And reassign the 'data' which is binded to 'data' property.
   }
   
   onFocused(e){
-    // do something when input is focused
+    // do something when input is focuse
   }
+
+  onOpened(e){
+    
+  }
+
+  openPanel(e): void {
+    
+    
+    this.auto.open();
+  } 
+
 }
 
 

@@ -38,7 +38,7 @@
           </div>
           <select id="spvWallet" class="custom-select" [(ngModel)]="query.spvWallet" (change)="onFilterChange()">
               <option value=""></option>
-              <option *ngFor="let w of spvWallets?.items" value="{{ w.name }}">{{ w.name }}</option>
+              <option *ngFor="let w of spvWallets" value="{{ w }}">{{ w }}</option>
           </select>  
       </div>
   </div>
@@ -49,7 +49,7 @@
           </div>
           <select id="xCloudService" class="form-control" [(ngModel)]="query.xCloudService" (change)="onFilterChange()">
               <option value=""></option>
-              <option *ngFor="let xc of xCloudServices?.items" value="{{ xc.name }}">{{ xc.name }}</option>
+              <option *ngFor="let xc of xCloudServices" value="{{ xc }}">{{ xc }}</option>
           </select>  
       </div>
   </div>
@@ -57,53 +57,57 @@
       <button class="btn btn-outline-primary" (click)="resetFilter()">Reset</button>
   </div>
 </div>
-
-<div class="table-responsive table-overflow mb-1">
-  <table class="table">
-      <thead>
-          <tr>
-              <th *ngFor="let c of columns"> {{ c.title }} </th>
-          </tr> 
-      </thead>
-      <tbody>
-              <tr *ngFor="let sn of serviceNodes?.items; let i = index">
-                  <td>
-                      <a [routerLink]="[sn.sNodeKey]">{{sn.sNodeKey}}</a>
-                  </td>
-                  <td>
-                      <a href="https://chainz.cryptoid.info/block/address.dws?{{sn.address}}">
-                          {{sn.address}}
-                      </a>    
-                  </td>
-                  <td>{{sn.type}}</td>
-                  <td>{{sn.status}}</td>
-                  <td>
-                      <div *ngIf="sn.spvWallets?.length > 0">
-                          <div class="input-group">
-                              <select id="spvWallets-{{i}}" [(ngModel)]="selectedSpvWallets[i]" name="spvWallets-{{i}}" class="custom-select">
-                                  <option *ngFor="let w of sn.spvWallets; let j = index" [value]="w">{{ w }} </option>
-                              </select>   
-                              <div class="input-group-append">
-                                  <button class="btn btn-outline-secondary" type="button" (click)="onSpvWalletClick(i)">View</button>
+<div *ngIf="loadingService.isLoading">
+    Loading...
+  </div> 
+<div *ngIf="!(loadingService.isLoading)">
+    <div class="table-responsive table-overflow mb-1">
+      <table class="table">
+          <thead>
+              <tr>
+                  <th *ngFor="let c of columns"> {{ c.title }} </th>
+              </tr> 
+          </thead>
+          <tbody>
+                  <tr *ngFor="let sn of serviceNodes?.items; let i = index">
+                      <td>
+                          <a [routerLink]="[sn.sNodeKey]">{{sn.sNodeKey}}</a>
+                      </td>
+                      <td>
+                          <a href="https://chainz.cryptoid.info/block/address.dws?{{sn.address}}">
+                              {{sn.address}}
+                          </a>    
+                      </td>
+                      <td>{{sn.type}}</td>
+                      <td>{{sn.status}}</td>
+                      <td>
+                          <div *ngIf="sn.spvWallets?.length > 0">
+                              <div class="input-group">
+                                  <select id="spvWallets-{{i}}" [(ngModel)]="selectedSpvWallets[i]" name="spvWallets-{{i}}" class="custom-select">
+                                      <option *ngFor="let w of sn.spvWallets; let j = index" [value]="w">{{ w }} </option>
+                                  </select>   
+                                  <div class="input-group-append">
+                                      <button class="btn btn-outline-secondary" type="button" (click)="onSpvWalletClick(i)">View</button>
+                                  </div>
                               </div>
-                          </div>
-                      </div> 
-                  </td>
-                  <td>
-                      <div *ngIf = "sn.xCloudServices.length > 0">
-                          <div class="input-group">
-                              <select id="xcloudServices-{{i}}" [(ngModel)]="selectedXCloudServices[i]" name="xcloudServices-{{i}}" class="custom-select">
-                                  <option *ngFor="let s of sn.xCloudServices; let k = index" [value]="s">{{ s }} </option>
-                              </select>
-                              <div class="input-group-append">
-                                  <button class="btn btn-outline-secondary" type="button" (click)="onXCloudServiceClick(i)">View</button>
-                              </div>   
                           </div> 
-                      </div>    
-                  </td>
-              </tr>
-      </tbody>
-  </table>
+                      </td>
+                      <td>
+                          <div *ngIf = "sn.xCloudServices.length > 0">
+                              <div class="input-group">
+                                  <select id="xcloudServices-{{i}}" [(ngModel)]="selectedXCloudServices[i]" name="xcloudServices-{{i}}" class="custom-select">
+                                      <option *ngFor="let s of sn.xCloudServices; let k = index" [value]="s">{{ s }} </option>
+                                  </select>
+                                  <div class="input-group-append">
+                                      <button class="btn btn-outline-secondary" type="button" (click)="onXCloudServiceClick(i)">View</button>
+                                  </div>   
+                              </div> 
+                          </div>    
+                      </td>
+                  </tr>
+          </tbody>
+      </table>
+    </div>
 </div>
 <div class="form-row align-items-center mb-2">
   <div class="col-auto">

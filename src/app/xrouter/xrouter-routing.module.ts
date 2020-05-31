@@ -1,17 +1,24 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { SpvWalletsComponent } from './pages/spv-wallets/spv-wallets.component';
-import { SpvWalletComponent } from './pages/spv-wallet/spv-wallet.component';
+import { SpvWalletComponent } from './xrouter-nodes/spv-wallet/spv-wallet.component';
+import { SpvWalletsNodesComponent } from './xrouter-nodes/spv-wallets-nodes/spv-wallets-nodes.component';
 
 const routes: Routes = [
-  { path: 'spv-wallets', component: SpvWalletsComponent, runGuardsAndResolvers: 'always' },
-  { path: 'spv-wallets/:name', component: SpvWalletComponent, runGuardsAndResolvers: 'always' },
-  { path: 'spv-wallets/:name/:nodePubKey', component: SpvWalletComponent, runGuardsAndResolvers: 'always' },
+  { 
+    path: '', 
+    component: SpvWalletsComponent, 
+    runGuardsAndResolvers: 'always',
+  },
+  { 
+    path: 'nodes', 
+    loadChildren: './xrouter-nodes/xrouter-nodes.module#XrouterNodesModule', 
+  }
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes)
+    RouterModule.forChild(routes)
   ],
   exports: [RouterModule],
   declarations: []

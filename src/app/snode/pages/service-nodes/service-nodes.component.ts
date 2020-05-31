@@ -3,11 +3,17 @@ import { Router } from '@angular/router';
 import { XrouterService } from '../../../xrouter/shared/services/xrouter.service';
 
 import { ServiceNodeService } from '../../shared/services/snode.service';
+import { LoadingService } from '../../../ui/spinner/shared/services/loading.service';
 import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-service-nodes',
-  template: `<app-service-node-list *ngIf="serviceNodes" 
+  template: `
+            <div *ngIf="!(serviceNodes && xCloudServices && spvWallets)">
+              Loading...
+            </div> 
+            <div *ngIf="serviceNodes && xCloudServices && spvWallets">
+              <app-service-node-list
               [serviceNodes]="serviceNodes" 
               [spvWallets]="spvWallets" 
               [xCloudServices]="xCloudServices" 
@@ -30,19 +36,16 @@ export class ServiceNodesComponent implements OnInit {
   constructor(
     private router: Router, 
     private xrouterService: XrouterService,
-    private serviceNodeService: ServiceNodeService
+    private serviceNodeService: ServiceNodeService,
+    private loadingService: LoadingService
     ) { 
   }
 
   ngOnInit() {
-    var sources = [
-      this.xrouterService.GetNetworkServices(),
-      this.xrouterService.GetNetworkSpvWallets(),
-    ];
-  
-    forkJoin(sources).subscribe(data =>{
-      this.xCloudServices = data[0];
-      this.spvWallets = data[1];
+    this.xrouterService.GetNetworkServices().subscribe(svc =>{
+      
+      this.xCloudServices = svc["services"]
+      this.spvWallets = svc["spvWallets"]
     }, err => {
       if(err.status == 404)
         this.router.navigate(['']);

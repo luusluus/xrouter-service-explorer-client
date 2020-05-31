@@ -9,7 +9,6 @@ import { AutocompleteLibModule } from 'angular-ng-autocomplete';
 
 import { AppComponent } from './app.component';
 
-
 import { MyServiceNodesModule } from './my-service-nodes/my-service-nodes.module';
 import { CommentsModule } from './comments/comments.module';
 import { StatisticsModule } from './statistics/statistics.module';
@@ -28,9 +27,12 @@ import { FooterComponent } from './footer/footer.component';
 import { SearchModule } from './ui/search/search.module';
 import { AuthenticationModule } from './core/authentication/authentication.module';
 import { RouterModule } from '@angular/router';
+import { LoadingInterceptor } from './ui/spinner/interceptors/loading.interceptor';
+import { SpinnerModule } from './ui/spinner/spinner.module';
+import { BlocknetService } from './blocknet-common/shared/services/blocknet.service';
 
-
-
+import { AppRoutingModule } from './app-routing.module';
+import { BreadcrumbModule } from './ui/breadcrumb/breadcrumb.module';
 
 // const appInitializerFn = (appConfig: ConfigurationService) => {
 //   return () => {
@@ -40,7 +42,6 @@ import { RouterModule } from '@angular/router';
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
     HeaderComponent,
     FooterComponent,
     PageNotFoundComponent,
@@ -48,10 +49,8 @@ import { RouterModule } from '@angular/router';
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
-    
     NgxPaginationModule,
-    
-    
+        
     AuthenticationModule,
     ErrorModule,
     TabsModule,
@@ -62,34 +61,20 @@ import { RouterModule } from '@angular/router';
     CommentsModule,
     StatisticsModule,
     
-    XrouterModule,
-    XCloudModule,
-    SnodeModule,
     UtxoModule,
-
-    RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: '**', component: PageNotFoundComponent }
-    ], { 
-      useHash: true,
-      onSameUrlNavigation: 'reload',
-      anchorScrolling: 'enabled'
-    }),
+    
+    AppRoutingModule,
+    BreadcrumbModule,
   ],
   providers: [
-    // {
-      //   provide: HTTP_INTERCEPTORS,
-      //   useClass: HttpErrorInterceptor,
-      //   multi: true
-      // },
-      // ConfigurationService, 
       // {
       //   provide: APP_INITIALIZER,
       //   useFactory: checkIfUserIsAuthenticated,
       //   multi: true,
       //   deps: [AccountService]
       // },
-      HttpRequestTimeInterceptor
+      // HttpRequestTimeInterceptor,
+      BlocknetService,
   ],
   bootstrap: [AppComponent]  
 })

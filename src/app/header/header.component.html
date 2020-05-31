@@ -1,78 +1,79 @@
 <header>
-        <nav
-          class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3"
-        >
-          <div class="container">
-            <a class="navbar-brand" [routerLink]="['/']">
-              <img src="../../assets/xrouter.png" width="135" height="30" alt="">
+  <nav
+    class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3"
+  >
+    <div class="container">
+      <a class="navbar-brand" [routerLink]="['/']">
+        <img src="../../assets/xrouter.png" width="135" height="30" alt="">
+      </a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target=".navbar-collapse"
+        aria-label="Toggle navigation"
+        [attr.aria-expanded]="isExpanded"
+        (click)="toggle()"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div
+        class="navbar-collapse collapse d-sm-inline-flex"
+        [ngClass]="{ show: isExpanded }"
+      >
+        <ul class="navbar-nav flex-grow mr-auto">
+          <li
+            class="nav-item"
+            [routerLinkActive]="['link-active']"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+          <a class="nav-link text-dark" [routerLink]="['/xrouter-snodes']">
+            Nodes
+          </a>
+          </li>
+          <li class="nav-item" [routerLinkActive]="['link-active']">
+            <a class="nav-link text-dark" [routerLink]="['/xcloud-services']">
+              Services
             </a>
-            <button
-              class="navbar-toggler"
-              type="button"
-              data-toggle="collapse"
-              data-target=".navbar-collapse"
-              aria-label="Toggle navigation"
-              [attr.aria-expanded]="isExpanded"
-              (click)="toggle()"
-            >
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div
-              class="navbar-collapse collapse d-sm-inline-flex"
-              [ngClass]="{ show: isExpanded }"
-            >
-              <ul class="navbar-nav flex-grow mr-auto">
-                <li
-                  class="nav-item"
-                  [routerLinkActive]="['link-active']"
-                  [routerLinkActiveOptions]="{ exact: true }"
-                >
-                <a class="nav-link text-dark" [routerLink]="['/xrouter-snodes']"
-                >Nodes</a>
-                </li>
-                <li class="nav-item" [routerLinkActive]="['link-active']">
-                  <a class="nav-link text-dark" [routerLink]="['/xcloud-services']"
-                    >Services</a
-                  >
-                </li>
-                <li class="nav-item" [routerLinkActive]="['link-active']">
-                  <a class="nav-link text-dark" [routerLink]="['/spv-wallets']"
-                    >SPV</a
-                  >
-                </li>
-              </ul>
-              <ul class="navbar-nav flex-grow ml-auto nav-flex-icons">
-                <li class="nav-item">
-                  <div class="ng-autocomplete">
-                    <search-form></search-form>
-                  </div>
-                </li>
-                <!-- <div *ngIf="!isUserAuthenticated; else loggedIn">
-                  <li class="nav-item">
-                      <a class="btn ml-4" style="background-color: #7289DA; color:white;" href="javascript:void(0)" (click)="login()">
-                        <img src="../../assets/discord-logo-white.png" width="30" alt="">
-                        <span class="mb-0 ml-1">Log in with Discord</span>
-                      </a>
-                  </li>
-                </div> 
-                <ng-template #loggedIn>
-                <li class="nav-item avatar dropdown">
-                  <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-5" data-toggle="dropdown" aria-haspopup="true"
-                    aria-expanded="false">
-                    <img src="{{ user.avatarUrl }}" class="rounded-circle z-depth-0" width="30" alt="avatar image">
-                  </a>
-                  <div class="dropdown-menu dropdown-menu-right dropdown-secondary" aria-labelledby="navbarDropdownMenuLink-5">
-                    <h6 class="dropdown-header">Logged in as {{ user.userName }}</h6>
-                    <a class="dropdown-item" [routerLink]="'/my-service-nodes/' + this.user.userId">My Service Nodes</a>
-                    <a class="dropdown-item" href="javascript:void(0)" (click)="logout()">Logout</a>
-                  </div>
-                </li>
-                </ng-template> -->
-              </ul>
-             
-                
+          </li>
+          <li class="nav-item" [routerLinkActive]="['link-active']">
+            <a class="nav-link text-dark" [routerLink]="['/spv-wallets']">
+              SPV
+            </a>
+          </li>
+        </ul>
+        <ul class="navbar-nav flex-grow ml-auto nav-flex-icons">
+          <li class="nav-item">
+            <div class="ng-autocomplete">
+              <search-form></search-form>
             </div>
-          </div>
-        </nav>
-      </header>
+          </li>
+          <!-- <div *ngIf="!isUserAuthenticated; else loggedIn">
+            <li class="nav-item">
+                <a class="btn ml-4" style="background-color: #7289DA; color:white;" href="javascript:void(0)" (click)="login()">
+                  <img src="../../assets/discord-logo-white.png" width="30" alt="">
+                  <span class="mb-0 ml-1">Log in with Discord</span>
+                </a>
+            </li>
+          </div> 
+          <ng-template #loggedIn>
+          <li class="nav-item avatar dropdown">
+            <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-5" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="false">
+              <img src="{{ user.avatarUrl }}" class="rounded-circle z-depth-0" width="30" alt="avatar image">
+            </a>
+            <div class="dropdown-menu dropdown-menu-right dropdown-secondary" aria-labelledby="navbarDropdownMenuLink-5">
+              <h6 class="dropdown-header">Logged in as {{ user.userName }}</h6>
+              <a class="dropdown-item" [routerLink]="'/my-service-nodes/' + this.user.userId">My Service Nodes</a>
+              <a class="dropdown-item" href="javascript:void(0)" (click)="logout()">Logout</a>
+            </div>
+          </li>
+          </ng-template> -->
+        </ul>
+        
+          
+      </div>
+    </div>
+  </nav>
+</header>
       

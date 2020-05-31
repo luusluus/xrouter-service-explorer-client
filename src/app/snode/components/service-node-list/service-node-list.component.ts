@@ -1,14 +1,15 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { fromEvent } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap, filter } from 'rxjs/operators';
+import { LoadingService } from '../../../ui/spinner/shared/services/loading.service';
 
 @Component({
   selector: 'app-service-node-list',
   templateUrl: './service-node-list.component.html',
   styleUrls: ['./service-node-list.component.css']
 })
-export class ServiceNodeListComponent implements OnInit, AfterViewInit {
+export class ServiceNodeListComponent implements OnInit, OnChanges, AfterViewInit {
   private readonly PAGE_SIZE = 10;
 
   @Input() serviceNodes:any;
@@ -31,7 +32,17 @@ export class ServiceNodeListComponent implements OnInit, AfterViewInit {
   selectedSpvWallets:string[];
   selectedXCloudServices:string[];
 
-  constructor(private router: Router, ) { }
+  constructor(
+    private router: Router,
+    public loadingService: LoadingService
+    ) { }
+
+  ngOnChanges(changes:SimpleChanges) {
+    this.selectedSpvWallets = new Array<string>(this.serviceNodes.items.length);     
+    this.selectedXCloudServices = new Array<string>(this.serviceNodes.items.length);
+    this.initializeSpvWalletDropdowns(this.serviceNodes)
+    this.initializeXCloudServicesDropdowns(this.serviceNodes)
+  }
 
   ngOnInit() {
     this.selectedSpvWallets = new Array<string>(this.serviceNodes.items.length);     
@@ -59,11 +70,11 @@ export class ServiceNodeListComponent implements OnInit, AfterViewInit {
   }
 
   onSpvWalletClick(i){
-    this.router.navigate(['/spv-wallets', this.selectedSpvWallets[i], this.serviceNodes.items[i].sNodeKey]);
+    this.router.navigate(['/spv-wallets/nodes', this.selectedSpvWallets[i], this.serviceNodes.items[i].sNodeKey]);
   }
 
   onXCloudServiceClick(i){
-    this.router.navigate(['/xcloud-services', this.selectedXCloudServices[i], this.serviceNodes.items[i].sNodeKey]);
+    this.router.navigate(['/xcloud-services/nodes', this.selectedXCloudServices[i], this.serviceNodes.items[i].sNodeKey]);
   }
 
   private initializeQuery(){

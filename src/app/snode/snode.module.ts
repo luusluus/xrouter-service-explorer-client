@@ -12,6 +12,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { XCloudModule } from '../xcloud/xcloud.module';
 import { XrouterModule } from '../xrouter/xrouter.module';
 import { ServiceNodeListComponent } from './components/service-node-list/service-node-list.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { LoadingInterceptor } from '../ui/spinner/interceptors/loading.interceptor';
+import { SpinnerModule } from '../ui/spinner/spinner.module';
 
 @NgModule({
   imports: [
@@ -20,11 +23,11 @@ import { ServiceNodeListComponent } from './components/service-node-list/service
     ReactiveFormsModule,
     NgbModule,
 
-    SnodeRoutingModule,
     BlocknetCommonModule,
     TabsModule,
-    XrouterModule,
-    XCloudModule
+    SpinnerModule,
+        
+    SnodeRoutingModule,
   ],
   declarations: [
     ServiceNodeComponent,
@@ -33,7 +36,8 @@ import { ServiceNodeListComponent } from './components/service-node-list/service
     ServiceNodeListComponent
   ],
   providers: [
-    ServiceNodeService
+    ServiceNodeService,
+    { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true }
   ]
 })
 export class SnodeModule { }

@@ -9,17 +9,21 @@ import { ServiceNodeService } from '../../../snode/shared/services/snode.service
 import { XCloudService } from '../../shared/services/xcloud.service';
 import { EnterpriseXCloudService } from '../../shared/services/enterprise.xcloud.service';
 import { ServiceRequest } from '../../shared/models/servicerequest.model';
+import { BreadcrumbsService} from '../../../ui/breadcrumb/breadcrumbs.service';
 
 @Component({
   selector: 'app-xcloud-service',
   template:
-  `
-    <app-xcloud-service-details *ngIf="serviceInfo"
-      [serviceName]="serviceName"
-      [nodePubKey]="nodePubKey"
-      [serviceInfo]="serviceInfo"
-      (onXCloudSubmit)="onXCloudSubmit($event)"
-    >
+        `<div *ngIf="!serviceInfo">
+          Loading...
+        </div> 
+        <div *ngIf="serviceInfo">
+          <app-xcloud-service-details 
+            [serviceName]="serviceName"
+            [nodePubKey]="nodePubKey"
+            [serviceInfo]="serviceInfo"
+            [serviceResult]="serviceResult"
+            (onXCloudSubmit)="onXCloudSubmit($event)">
   `
 })
 export class XCloudServiceComponent implements OnInit, OnDestroy {
@@ -28,7 +32,8 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
   serviceName:string;
   nodePubKey:string;
   serviceInfo:any;
-  serviceResult: string;
+  serviceResult: any;
+  breadcrumbs: any[];
 
 
   constructor(
@@ -36,14 +41,13 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
     private enterpriseXCloudService:EnterpriseXCloudService,
     private router:Router,
     private route:ActivatedRoute, 
-    private location:Location,
-    private serviceNodeService: ServiceNodeService
+    private serviceNodeService: ServiceNodeService,
+    private breadcrumbsService:BreadcrumbsService
     ) 
     { 
-      this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+      // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
       this.route.params.subscribe(p => {
         this.serviceName = p['name'];
-        this.nodePubKey = p['nodePubKey'];
         if (isNullOrUndefined(this.serviceName)) {
           router.navigate(['']);
           return; 
@@ -55,6 +59,8 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
           this.initializeData();
         }
       });
+
+      this.breadcrumbsService.get().subscribe(breadcrumbs => this.breadcrumbs = breadcrumbs);
     }
 
   private initializeData(){
@@ -63,37 +69,50 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
 
     forkJoin([observableServiceNodeInfo]).pipe(takeUntil(this.ngUnsubscribe)).subscribe(([serviceInfo]) =>{
       this.serviceInfo = serviceInfo;
-      this.location.replaceState("/xcloud-services/" + this.serviceName + "/" + this.serviceInfo.node.nodePubKey);
+      this.nodePubKey = this.serviceInfo.node.nodePubKey;
     }, err => {
       // if(err.status == 404)
+      console.log(err)
       this.router.navigate(['/error'], {queryParams: err});
     });
   }
-  ngOnInit() {}
+  ngOnInit() {
+    this.breadcrumbsService.store([
+      this.breadcrumbs[0], 
+      this.breadcrumbs[1], 
+      {
+        label: this.serviceName, 
+        url:this.breadcrumbs[1].url + '/nodes/' + this.serviceName, 
+        params:[]
+      }, 
+      this.breadcrumbs[2]]
+    );    
+  }
 
   onXCloudSubmit(xCloudInput:any) { 
-    const parametervalues = xCloudInput.parametervalues
-    if(this.serviceInfo.node.type === "Enterprise")
-      this.enterpriseXCloudService.Service(this.serviceName, parametervalues, 'http://' + this.serviceInfo.node.host + ':' + this.serviceInfo.node.port)
+    const parameterValues = xCloudInput.parameterValues;
+    const enterprise = xCloudInput.callEXRDirectly;
+    if(enterprise)
+      this.enterpriseXCloudService.Service(this.serviceName, parameterValues, 'http://' + this.serviceInfo.node.host + ':' + this.serviceInfo.node.port)
       .pipe(
         finalize(() => {
       }))  
       .subscribe(result => {
-          this.serviceResult = JSON.stringify(result, undefined, 2);
+          this.serviceResult = {...result};
         },
         error => {
-          this.serviceResult = JSON.stringify(error, undefined, 2);
+          this.serviceResult = this.serviceResult = {...error};
         });    
     else
-      this.xcloudService.Service(new ServiceRequest(this.serviceName, parametervalues, 1))
+      this.xcloudService.Service(new ServiceRequest(this.serviceName, parameterValues, 1))
       .pipe(
         finalize(() => {
       }))  
       .subscribe(result => {
-          this.serviceResult = JSON.stringify(result, undefined, 2);
+          this.serviceResult = result;
         },
         error => {
-          this.serviceResult = JSON.stringify(error, undefined, 2);
+          this.serviceResult = error;
         });    
   }
 

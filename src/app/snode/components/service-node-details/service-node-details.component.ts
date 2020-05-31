@@ -12,7 +12,7 @@ export class ServiceNodeDetailsComponent implements OnInit {
   @Input() service:string;
   @Input() xCloudServices:any;
   @Input() serviceNodeInfo:any;
-  constructor(private router:Router,) { }
+  constructor(private router:Router) { }
 
   ngOnInit() {
   }

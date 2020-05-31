@@ -1,7 +1,8 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { Subject } from 'rxjs';
 import { NgForm } from '@angular/forms';
-import { SpvWalletInfo } from '../../shared/models/spvWalletInfo.model';
+import { SpvWalletInfo } from '../../../snode/shared/models/spvWalletInfo.model';
+import { LoadingService} from '../../../ui/spinner/shared/services/loading.service';
 
 @Component({
   selector: 'app-spv-wallet-details',
@@ -18,6 +19,8 @@ export class SpvWalletDetailsComponent implements OnInit, OnChanges {
   
   executing: boolean;
 
+  callEXRDirectly: boolean = false;
+
   minNodeCount:number = 1;
   nodeCount:number = 1;
   shortSpvWalletName:string;
@@ -30,15 +33,19 @@ export class SpvWalletDetailsComponent implements OnInit, OnChanges {
   txIds:string[] = [""];
   
 
-  constructor() { }
+  constructor(private loadingService:LoadingService) { }
 
   ngOnInit() {
     this.shortSpvWalletName = this.spvWalletName.replace("xr::", "");
     this.selectedSpvCommand = this.spvWalletInfo.spvConfig.commands[0].command;
     this.executing = false;
+
+    if(this.spvWalletInfo.node.type == 'Enterprise'){
+      // this.callEXRDirectly = true;
+    }
   }
 
-  ngOnChanges(){
+  ngOnChanges(changes: SimpleChanges){    
     this.executing = false;
   }
 
@@ -49,7 +56,8 @@ export class SpvWalletDetailsComponent implements OnInit, OnChanges {
         form: this.form, 
         blockHashes: this.blockHashes, 
         txIds : this.txIds, 
-        nodeCount: this.nodeCount
+        nodeCount: this.nodeCount,
+        callEXRDirectly : this.callEXRDirectly
       }
     );
   }

@@ -4,20 +4,20 @@
 .black-80 {
     color: rgba(0,0,0,.8);
   }
-  
-  .black-50{
-    color: rgba(0,0,0,.5);
-  }
-  
-  .fw6{
-    font-weight:600;
-  }
-  
-  .f5{
-    font-size: 1rem;
-  }
 
-  .truncate{
+.black-50{
+  color: rgba(0,0,0,.5);
+}
+
+.fw6{
+  font-weight:600;
+}
+
+.f5{
+  font-size: 1rem;
+}
+
+.truncate{
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -25,5 +25,13 @@
 }
 
 .pane{
-    padding: 1em;
-  }
+  padding: 1em;
+}
+
+.cursor-pointer-tr tr
+{
+	cursor: pointer;
+}
+.cursor-pointer {
+    cursor: pointer !important;
+}
