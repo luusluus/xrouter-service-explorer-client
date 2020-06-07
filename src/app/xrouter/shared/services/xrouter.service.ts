@@ -19,17 +19,9 @@ export class XrouterService extends BaseService{
     return this.http.get(_URL);
   }
 
-  // getAllServices(){
-  //   return this.http.get(this.apiEndpoint + '/getAllServices');
-  // }
-
   GetNetworkServices(){
     return this.http.get(this.apiEndpoint + '/getNetworkServices');
   }
-
-  // GetNetworkSpvWallets(){
-  //   return this.http.get(this.apiEndpoint + '/getNetworkSpvWallets');
-  // }
 
   GetBlockCount(token:string, node_count:number = 1){
     let url = this.apiEndpoint + '/GetBlockCount';

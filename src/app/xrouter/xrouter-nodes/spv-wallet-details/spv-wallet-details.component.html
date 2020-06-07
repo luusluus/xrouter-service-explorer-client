@@ -206,7 +206,7 @@
               </div>
             </div>
         </my-tab>
-        <my-tab tabTitle="Offered by other nodes">
+        <!-- <my-tab tabTitle="Offered by other nodes">
           <h3>Other Service Nodes that offer {{shortSpvWalletName}} SPV</h3>
           <div *ngIf="spvWalletInfo?.otherNodes?.length == 0 else notEmpty">
             There are no other service nodes supporting {{shortSpvWalletName}} SPV.
@@ -220,19 +220,21 @@
                     <th>Snode Key</th>
                     <th>Type</th>
                     <th>Score</th>
+                    <th>Default Fee</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let s of spvWalletInfo?.otherNodes">
-                    <td class="ellipsis"><a [routerLink]="['/spv-wallets/nodes', spvWalletName, s.nodePubKey]">{{s.nodePubKey}}</a></td>
+                    <td class="ellipsis"><a [routerLink]="['/spv-wallets/nodes', spvWalletName, s.nodePubKey]" >{{s.nodePubKey}}</a></td>
                     <td>{{s.type}}</td>
                     <td>{{s.score}}</td>
+                    <td>{{s.feeDefault}}</td>
                   </tr>
                 </tbody>
               </table>
             </div>     
           </ng-template>
-        </my-tab>
+        </my-tab> -->
       </div>
       <div class="col-3">
         <app-snode-info-block [snodeInfo]="spvWalletInfo.node"></app-snode-info-block>

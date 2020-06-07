@@ -4,7 +4,6 @@ import { XrouterService } from '../../../xrouter/shared/services/xrouter.service
 
 import { ServiceNodeService } from '../../shared/services/snode.service';
 import { LoadingService } from '../../../ui/spinner/shared/services/loading.service';
-import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-service-nodes',
@@ -47,8 +46,8 @@ export class ServiceNodesComponent implements OnInit {
       this.xCloudServices = svc["services"]
       this.spvWallets = svc["spvWallets"]
     }, err => {
-      if(err.status == 404)
-        this.router.navigate(['']);
+      console.log(err)
+      this.router.navigate(['/error'], {queryParams: err});
     });
     this.populateServiceNodes();
   }
@@ -58,6 +57,9 @@ export class ServiceNodesComponent implements OnInit {
     this.serviceNodeService.GetServiceNodeList(this.query)
       .subscribe(servicenodes => {  
         this.serviceNodes = servicenodes;
+      }, err => {
+        console.log(err)
+        this.router.navigate(['/error'], {queryParams: err});
       });
   }
 

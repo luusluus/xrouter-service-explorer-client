@@ -3,6 +3,7 @@ import { forkJoin } from 'rxjs';
 import { Router } from '@angular/router';
 import { StatisticsService } from '../statistics/shared/services/stats.service';
 import { XrouterService } from '../xrouter/shared/services/xrouter.service';
+import { ServiceNodeService } from '../snode/shared/services/snode.service';
 
 @Component({
   selector: 'app-home',
@@ -12,7 +13,7 @@ export class HomeComponent implements OnInit{
   constructor(
     private router: Router, 
     private xrouterService: XrouterService,
-    private statsService: StatisticsService
+    private servicenodeService: ServiceNodeService
     )
     {}
   networkServiceCount:any;
@@ -22,19 +23,18 @@ export class HomeComponent implements OnInit{
 
   ngOnInit(): void {
    var sources = [
-     this.statsService.GetServiceNodeCount(),
-     this.xrouterService.GetNetworkServices(),
-    //  this.statsService.GetEnterpriseXRouterCount()
+     this.servicenodeService.GetServiceNodeCount(),
+     this.xrouterService.GetNetworkServices()
    ];
 
    forkJoin(sources).subscribe(data =>{
       this.networkServiceCount = data[0];
-      this.xCloudServiceCount = data[1]["services"].length
-      this.spvWalletCount = data[1]["spvWallets"].length
+      this.xCloudServiceCount = data[1]["reply"]["services"].length
+      this.spvWalletCount = data[1]["reply"]["spvWallets"].length
       
     }, err => {
-      if(err.status == 404)
-        this.router.navigate(['']);
+        console.log(err)
+        this.router.navigate(['/error'], {queryParams: err});
     });
   }
 }

@@ -4,6 +4,10 @@ import { Component, OnInit, Input } from '@angular/core';
   selector: 'app-node-list',
   template: `
         <h2>Service nodes supporting {{ service }}</h2>
+        <h4>
+          <span class="badge badge-secondary" *ngIf="nodes.length == 1; else manyNodes">{{ nodes.length}} Servicenode</span>
+          <ng-template #manyNodes><span class="badge badge-secondary">{{ nodes.length}} Servicenodes</span></ng-template>
+        </h4>
         <table class="table table-striped">
             <thead>
               <tr>

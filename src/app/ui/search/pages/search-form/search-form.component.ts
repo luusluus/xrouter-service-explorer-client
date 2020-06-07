@@ -27,7 +27,7 @@ export class SearchFormComponent extends BaseService {
     super();
       this.xrouterService.GetNetworkServices().subscribe(
       data => {
-        let temp = data["nodeCounts"];
+        let temp = data["reply"]["nodeCounts"];
         this.nodeCounts = Object.keys(temp).map(i => {
           return {name: i, nodeCount: temp[i]}
         });

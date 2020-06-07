@@ -26,6 +26,8 @@ import { SpvWalletsNodesComponent } from './xrouter-nodes/spv-wallets-nodes/spv-
   ],
   declarations: [
     SpvWalletsComponent,
+
+    CustomMinDirective
   ],
   providers:[
     XrouterService,

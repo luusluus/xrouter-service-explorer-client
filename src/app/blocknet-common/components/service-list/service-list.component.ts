@@ -5,6 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
   selector: 'service-list',
   template: `
         <h2>{{ nameList }}</h2>
+        <h4><span class="badge badge-secondary ml-1">{{ (services | keyvalue).length}} {{ nameList }}</span></h4>
         <table class="table table-striped">
             <thead>
               <tr>

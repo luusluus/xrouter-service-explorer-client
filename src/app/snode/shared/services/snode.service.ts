@@ -16,6 +16,10 @@ export class ServiceNodeService extends BaseService{
     super();
    }
 
+  GetServiceNodeCount(){
+    let url = this.apiEndpoint + '/GetServiceNodeCount';
+    return this.http.get(url);
+  }
   GetNodesByService(service:string, node_count:number = 1){
     let url = this.apiEndpoint + '/GetNodesByService/?service=' + service;
     url += '&node_count=' + node_count;
@@ -47,11 +51,6 @@ export class ServiceNodeService extends BaseService{
     }
     url += '&node_count=' + node_count;
     return this.http.get(url);
-  }
-
-  FilterXCloudServiceServiceNode(filter){
-    let url = this.apiEndpoint + '/FilterXCloudServiceServiceNode' + '?' + this.toQueryString(filter);
-    return this.http.get<any>(url);
   }
 
   GetServiceNodeList(filter?){

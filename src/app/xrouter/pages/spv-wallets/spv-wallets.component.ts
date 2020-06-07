@@ -27,6 +27,7 @@ export class SpvWalletsComponent implements OnInit {
   nameList:string = "Spv Wallets";
 
   constructor(
+    private router: Router,
     private loadingService: LoadingService,
     private xrouterService: XrouterService
     ) { 
@@ -39,11 +40,14 @@ export class SpvWalletsComponent implements OnInit {
   private populateSpvWallets(){
     this.xrouterService.GetNetworkServices()
       .subscribe(svc => {        
-        let nc = svc["nodeCounts"]
+        let nc = svc["reply"]["nodeCounts"]
         
         this.spvWallets = Object.keys(nc)
           .filter(key => key.includes('xr::'))
           .reduce( (res, key) => (res[key] = nc[key], res), {} );        
+      }, err => {
+        console.log(err)
+        this.router.navigate(['/error'], {queryParams: err});
       });
   }
 }

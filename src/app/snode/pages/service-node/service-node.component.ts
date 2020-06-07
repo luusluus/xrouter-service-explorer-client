@@ -66,12 +66,12 @@ export class ServiceNodeComponent implements OnInit, OnDestroy {
   }
 
 
-  private populateXCloudServices(){
-    this.serviceNodeService.FilterXCloudServiceServiceNode(this.query)
-      .subscribe(result => {        
-        this.xCloudServices = result;
-      });
-  }
+  // private populateXCloudServices(){
+  //   this.serviceNodeService.FilterXCloudServiceServiceNode(this.query)
+  //     .subscribe(result => {        
+  //       this.xCloudServices = result;
+  //     });
+  // }
   
   ngOnDestroy() {
     // This aborts all HTTP requests.

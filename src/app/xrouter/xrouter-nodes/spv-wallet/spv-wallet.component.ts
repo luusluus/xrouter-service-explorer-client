@@ -5,7 +5,7 @@ import { XrouterService } from '../../shared/services/xrouter.service';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { isNullOrUndefined } from 'util';
 import { finalize, takeUntil } from 'rxjs/operators';
-import { forkJoin, Observable, Subject, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { EnterpriseXRouterService } from '../../shared/services/enterprise.xrouter.service';
 import { ServiceNodeService } from '../../../snode/shared/services/snode.service';
 import { SpvWalletInfo } from '../../../snode/shared/models/spvWalletInfo.model';
@@ -57,10 +57,6 @@ export class SpvWalletComponent implements OnInit, OnDestroy {
         }
       });
 
-      // this.router.routeReuseStrategy.shouldReuseRoute = function(){
-      //   return false;
-      // };
-
       this.navigationSubscription = this.router.events.subscribe((e:any) => {
         if(e instanceof NavigationEnd){
           this.initializeData();
@@ -71,7 +67,6 @@ export class SpvWalletComponent implements OnInit, OnDestroy {
     }
 
   private initializeData(){
-    console.log(this.nodePubKey)
     this.serviceNodeService.GetSpvWalletInfo(this.spvWalletName, this.nodePubKey).subscribe(spvWalletInfo =>{
       this.spvWalletInfo = spvWalletInfo;
     }, err => {
@@ -80,16 +75,16 @@ export class SpvWalletComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-      this.breadcrumbsService.store([
-        this.breadcrumbs[0], 
-        this.breadcrumbs[1], 
-        {
-          label: this.spvWalletName, 
-          url:this.breadcrumbs[1].url + '/nodes/' + this.spvWalletName, 
-          params:[]
-        }, 
-        this.breadcrumbs[2]]
-      );
+    this.breadcrumbsService.store([
+      this.breadcrumbs[0], 
+      this.breadcrumbs[1], 
+      {
+        label: this.spvWalletName, 
+        url:this.breadcrumbs[1].url + '/nodes/' + this.spvWalletName, 
+        params:[]
+      }, 
+      this.breadcrumbs[2]]
+    );
   }
 
   private callXrouterCommand(callback:Observable<object>){

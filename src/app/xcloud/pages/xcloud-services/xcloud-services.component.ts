@@ -31,6 +31,7 @@ export class XCloudServicesComponent implements OnInit {
   };
 
   constructor(
+    private router: Router,
     private xrouterService: XrouterService) { 
     
   }
@@ -42,12 +43,14 @@ export class XCloudServicesComponent implements OnInit {
   private populateServices(){
     this.xrouterService.GetNetworkServices()
       .subscribe(svc => {
-
-        let nc = svc["nodeCounts"]
+        let nc = svc["reply"]["nodeCounts"]
         
         this.services = Object.keys(nc)
           .filter(key => key.includes('xrs::'))
           .reduce( (res, key) => (res[key] = nc[key], res), {} );
+      }, err => {
+        console.log(err)
+        this.router.navigate(['/error'], {queryParams: err});
       });
   }
 
