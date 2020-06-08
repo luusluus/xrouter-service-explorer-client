@@ -13,14 +13,14 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+#   build:
+#     # The type of runner that the job will run on
+#     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
+#     # Steps represent a sequence of tasks that will be executed as part of the job
+#     steps:
+#     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+#     - uses: actions/checkout@v2
 
 #     - name: Publish Docker
 #       uses: elgohr/Publish-Docker-Github-Action@2.16
@@ -33,15 +33,22 @@ jobs:
 #         password: ${{ secrets.DOCKER_PASSWORD }}
 #         tags: ${{ github.sha }}
         
-    - name: deploy to cluster
-      uses: rsooo/kubectl@v1.0.1
-      env:
-        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-      with:
-        args: set image --record deployment/serviceexplorer-client container= lucienmartijn/service.explorer.client:54505ff53ff483f5575ed13ec364001c681767de
-    - name: verify deployment
-      uses: steebchen/kubectl@master
-      env:
-        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-      with:
-        args: '"rollout status deployment/serviceexplorer-client"'  
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: deploy to cluster
+        uses: rsooo/kubectl@v1.0.1
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        with:
+          args: set image --record deployment/serviceexplorer-client container= lucienmartijn/service.explorer.client:54505ff53ff483f5575ed13ec364001c681767de
+      - name: verify deployment
+        uses: steebchen/kubectl@master
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        with:
+          args: '"rollout status deployment/serviceexplorer-client"'
+      
+        
+    
