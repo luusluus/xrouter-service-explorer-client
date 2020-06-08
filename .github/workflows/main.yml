@@ -22,13 +22,26 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
-    - name: Publish Docker
-      uses: elgohr/Publish-Docker-Github-Action@2.16
+#     - name: Publish Docker
+#       uses: elgohr/Publish-Docker-Github-Action@2.16
+#       with:
+#         # The name of the image you would like to push
+#         name: lucienmartijn/service.explorer.client
+#         # The login username for the registry
+#         username: ${{ secrets.DOCKER_USER_NAME }} 
+#         # The login password for the registry
+#         password: ${{ secrets.DOCKER_PASSWORD }}
+#         tags: ${{ github.sha }}
+        
+    - name: deploy to cluster
+      uses: rsooo/kubectl@v1.0.1
+      env:
+        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
       with:
-        # The name of the image you would like to push
-        name: lucienmartijn/service.explorer.client
-        # The login username for the registry
-        username: ${{ secrets.DOCKER_USER_NAME }} 
-        # The login password for the registry
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        tags: ${{ github.sha }}
+        args: set image --record deployment/serviceexplorer-client container= lucienmartijn/service.explorer.client:54505ff53ff483f5575ed13ec364001c681767de
+    - name: verify deployment
+      uses: steebchen/kubectl@master
+      env:
+        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+      with:
+        args: '"rollout status deployment/serviceexplorer-client"'  
