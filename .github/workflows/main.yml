@@ -31,3 +31,4 @@ jobs:
         username: ${{ secrets.DOCKER_USER_NAME }} 
         # The login password for the registry
         password: ${{ secrets.DOCKER_PASSWORD }}
+        tags: ${{ github.sha }}
