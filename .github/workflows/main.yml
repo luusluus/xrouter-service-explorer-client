@@ -42,13 +42,13 @@ jobs:
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
-          args: set image --record deployment/serviceexplorer-client serviceexplorer-client= lucienmartijn/service.explorer.client:54505ff53ff483f5575ed13ec364001c681767de
-      - name: verify deployment
-        uses: steebchen/kubectl@master
-        env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-        with:
-          args: '"rollout status deployment/serviceexplorer-client"'
+          args: get pods
+#       - name: verify deployment
+#         uses: steebchen/kubectl@master
+#         env:
+#           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+#         with:
+#           args: '"rollout status deployment/serviceexplorer-client"'
       
         
     
