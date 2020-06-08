@@ -42,13 +42,13 @@ jobs:
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
-          args: get pods
-#       - name: verify deployment
-#         uses: steebchen/kubectl@master
-#         env:
-#           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-#         with:
-#           args: '"rollout status deployment/serviceexplorer-client"'
+          args: help
+      - name: verify deployment
+        uses: steebchen/kubectl@master
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        with:
+          args: '"rollout status deployment/serviceexplorer-client"'
       
         
     
