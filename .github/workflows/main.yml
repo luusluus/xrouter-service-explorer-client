@@ -22,12 +22,14 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
-    - name: Docker Login
-      uses: Azure/docker-login@v1
+    - name: Publish Docker
+      uses: elgohr/Publish-Docker-Github-Action@2.16
       with:
-        # Container registry username
-        username: # default is 
-        # Container registry password
-        password: # default is 
-        # Container registry server url
-        login-server: # default is https://index.docker.io/v1/
+        # The name of the image you would like to push
+        name: lucienmartijn/service.explorer.client
+        # The login username for the registry
+        username: ${{ secrets.DOCKER_USER_NAME }} 
+        # The login password for the registry
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        # Use registry for pushing to a custom registry
+        registry: https://hub.docker.com/
