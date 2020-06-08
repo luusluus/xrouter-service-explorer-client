@@ -34,7 +34,7 @@ jobs:
 #         tags: ${{ github.sha }}
         
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest 
     steps:
       - uses: actions/checkout@master
       - name: deploy to cluster
