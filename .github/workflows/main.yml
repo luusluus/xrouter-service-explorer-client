@@ -42,7 +42,7 @@ jobs:
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
-          args: help
+          args: get po
       - name: verify deployment
         uses: steebchen/kubectl@master
         env:
