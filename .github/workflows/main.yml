@@ -31,5 +31,3 @@ jobs:
         username: ${{ secrets.DOCKER_USER_NAME }} 
         # The login password for the registry
         password: ${{ secrets.DOCKER_PASSWORD }}
-        # Use registry for pushing to a custom registry
-        registry: docker.pkg.github.com
