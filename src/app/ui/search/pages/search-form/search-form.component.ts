@@ -35,7 +35,7 @@ export class SearchFormComponent extends BaseService {
     )
   }
 
-  @ViewChild('auto') auto;
+  @ViewChild('auto', { static: true }) auto;
 
   keyword = 'name';
   public nodeCounts:any;

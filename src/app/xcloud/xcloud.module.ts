@@ -12,13 +12,16 @@ import { EnterpriseXCloudService } from './shared/services/enterprise.xcloud.ser
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { LoadingInterceptor } from '../ui/spinner/interceptors/loading.interceptor';
 import { SpinnerModule } from '../ui/spinner/spinner.module';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { InvoiceModule } from '../invoice/invoice.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    
+    NgbModule,
+    InvoiceModule,
     BlocknetCommonModule,
     
     SpinnerModule,

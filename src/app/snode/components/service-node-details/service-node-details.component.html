@@ -21,9 +21,9 @@
     </tr>
     <tr>
       <td>XRouter Endpoint</td>
-      <div *ngIf="serviceNodeInfo.port; else noPort">
-        <td>http://{{ serviceNodeInfo?.host }}:{{serviceNodeInfo?.port}}</td>
-      </div>
+      
+      <td *ngIf="serviceNodeInfo.port; else noPort">http://{{ serviceNodeInfo?.host }}:{{serviceNodeInfo?.port}}</td>
+      
       <ng-template #noPort> 
         <td>http://{{ serviceNodeInfo?.host }}</td>
       </ng-template>

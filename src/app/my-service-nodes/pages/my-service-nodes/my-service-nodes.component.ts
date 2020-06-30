@@ -16,7 +16,7 @@ import { ServiceNodeService } from '../../../snode/shared/services/snode.service
   styleUrls: ['./my-service-nodes.component.css']
 })
 export class MyServiceNodesComponent implements OnInit {
-  @ViewChild('f') serviceNodeForm: NgForm;
+  @ViewChild('f', { static: false }) serviceNodeForm: NgForm;
   allServiceNodes:any;
   myServiceNodes:MyServiceNode[];
   newServiceNode: MyServiceNode = new MyServiceNode();

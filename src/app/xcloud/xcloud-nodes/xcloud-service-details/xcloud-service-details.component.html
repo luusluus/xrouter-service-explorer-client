@@ -6,8 +6,10 @@
           <my-tab tabTitle="Readme">
             <h3>{{serviceName}}</h3>
             <hr>
+            <h6>Description</h6>
+            <p>{{serviceInfo.service.description}}</p>
             <h6>Help</h6>
-            <p>{{serviceInfo.service.helpDescription}}</p>
+            <p>{{serviceInfo.service.help}}</p>
             <h6>Fee</h6>
             <p>{{serviceInfo.service.fee}} BLOCK</p>
             <div *ngIf="serviceInfo.service.parameters">
@@ -19,13 +21,22 @@
             <h6>Client Request Limit</h6> 
             <p>{{serviceInfo.service.requestLimit}}</p>
           </my-tab>
-          <my-tab tabTitle="Try it out">
-            <h3>Try out the {{ serviceName }} service</h3>
+          <my-tab tabTitle="{{ servicePayType }}">
+            <h3 *ngIf="serviceInfo.service.fee > 0 else free">Purchase the {{ serviceName }} service</h3>
+            <ng-template #free>
+              <h3>Try out the {{ serviceName }} service</h3>
+            </ng-template>
             <hr>
-            <div *ngIf="serviceInfo.service.helpDescription">
-              <h6>Help</h6>
-              <p>{{serviceInfo.service.helpDescription}}</p>
+            <div *ngIf="serviceInfo.service.description">
+              <h6>Description</h6>
+              <p>{{serviceInfo.service.description}}</p>
             </div>
+            <div *ngIf="serviceInfo.service.help">
+              <h6>Help</h6>
+              <p>{{serviceInfo.service.help}}</p>
+            </div>
+            <h6>Fee</h6>
+            <p>{{serviceInfo.service.fee}} BLOCK</p>
             <div class="row">
               <div class="col-12">
                 <h4>Request</h4>

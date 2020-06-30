@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { Router } from '@angular/router';
-import { StatisticsService } from '../statistics/shared/services/stats.service';
 import { XrouterService } from '../xrouter/shared/services/xrouter.service';
 import { ServiceNodeService } from '../snode/shared/services/snode.service';
+import { SignalRService } from '../invoice/signal-r.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -13,7 +15,7 @@ export class HomeComponent implements OnInit{
   constructor(
     private router: Router, 
     private xrouterService: XrouterService,
-    private servicenodeService: ServiceNodeService
+    private servicenodeService: ServiceNodeService,
     )
     {}
   networkServiceCount:any;

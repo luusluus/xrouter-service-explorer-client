@@ -10,7 +10,7 @@ const routes : Routes = [
   },
   { 
     path: 'nodes', 
-    loadChildren: './xcloud-nodes/xcloud-nodes.module#XcloudNodesModule', 
+    loadChildren: () => import('./xcloud-nodes/xcloud-nodes.module').then(m => m.XcloudNodesModule), 
   }
 ];
 @NgModule({

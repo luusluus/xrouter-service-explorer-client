@@ -95,8 +95,7 @@ export class SpvWalletComponent implements OnInit, OnDestroy {
           this.spvWalletCommandResult = JSON.stringify(result, undefined, 2);
         },
         error => {
-          console.log(error)
-          this.spvWalletCommandResult = JSON.stringify(error, undefined, 2);
+          this.spvWalletCommandResult = JSON.stringify(error.error, undefined, 2);
         });
   }
 

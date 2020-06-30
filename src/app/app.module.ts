@@ -11,7 +11,6 @@ import { AppComponent } from './app.component';
 
 import { MyServiceNodesModule } from './my-service-nodes/my-service-nodes.module';
 import { CommentsModule } from './comments/comments.module';
-import { StatisticsModule } from './statistics/statistics.module';
 import { BlocknetCommonModule } from './blocknet-common/blocknet-common.module';
 import { XrouterModule } from './xrouter/xrouter.module';
 import { XCloudModule } from './xcloud/xcloud.module';
@@ -59,7 +58,6 @@ import { BreadcrumbModule } from './ui/breadcrumb/breadcrumb.module';
     
     MyServiceNodesModule,
     CommentsModule,
-    StatisticsModule,
     
     UtxoModule,
     

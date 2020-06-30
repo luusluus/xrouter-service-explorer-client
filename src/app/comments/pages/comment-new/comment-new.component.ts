@@ -21,7 +21,7 @@ export class CommentNewComponent implements OnInit, OnDestroy {
   @Input('serviceName') serviceName:string;
   @Input('commentId') commentId:string;
   
-  @ViewChild('commentForm') serviceForm: NgForm;
+  @ViewChild('commentForm', {static: false}) serviceForm: NgForm;
   
   user:User;
   subscription: Subscription;

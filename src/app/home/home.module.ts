@@ -10,21 +10,21 @@ const HOME_ROUTES: Routes = [
   },
   { 
     path: 'xrouter-snodes', 
-    loadChildren: '../snode/snode.module#SnodeModule', 
+    loadChildren: () => import('../snode/snode.module').then(m => m.SnodeModule), 
     data: {
       breadcrumb: 'Service Nodes'
     }
   },
   { 
     path: 'xcloud-services', 
-    loadChildren: '../xcloud/xcloud.module#XCloudModule', 
+    loadChildren: () => import('../xcloud/xcloud.module').then(m => m.XCloudModule), 
     data: {
       breadcrumb: 'XCloud Services'
     }
   },
   { 
     path: 'spv-wallets', 
-    loadChildren: '../xrouter/xrouter.module#XrouterModule', 
+    loadChildren: () => import('../xrouter/xrouter.module').then(m => m.XrouterModule), 
     data: {
       breadcrumb: 'SPV Wallets'
     }

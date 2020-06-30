@@ -25,8 +25,8 @@ import { CommentService } from "../../shared/services/comment.service";
 
     commentBody:string;
     isUserAuthenticated = false;
-    @ViewChild('reply', { read: ViewContainerRef }) container: ViewContainerRef;
-    @ViewChild('replyButton') replyButtonRef: ElementRef;
+    @ViewChild('reply', { read: ViewContainerRef, static: true }) container: ViewContainerRef;
+    @ViewChild('replyButton', { static: false }) replyButtonRef: ElementRef;
     componentRef:any;
 
     constructor(private resolver: ComponentFactoryResolver, 

@@ -36,15 +36,13 @@ export class ServiceNodesComponent implements OnInit {
     private router: Router, 
     private xrouterService: XrouterService,
     private serviceNodeService: ServiceNodeService,
-    private loadingService: LoadingService
     ) { 
   }
 
   ngOnInit() {
     this.xrouterService.GetNetworkServices().subscribe(svc =>{
-      
-      this.xCloudServices = svc["services"]
-      this.spvWallets = svc["spvWallets"]
+      this.xCloudServices = svc["reply"]["services"]
+      this.spvWallets = svc["reply"]["spvWallets"]
     }, err => {
       console.log(err)
       this.router.navigate(['/error'], {queryParams: err});

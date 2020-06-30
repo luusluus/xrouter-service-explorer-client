@@ -30,7 +30,7 @@ export class SpvWalletDetailsComponent implements OnInit, OnChanges {
   selectedSpvCommand:string;
   onCommandSelectedSubject: Subject<any> = new Subject<any>();
 
-  @ViewChild('spvCallForm') form: NgForm;
+  @ViewChild('spvCallForm', { static: true }) form: NgForm;
   blockHashes:string[] = [""];
   txIds:string[] = [""];
   

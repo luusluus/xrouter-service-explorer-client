@@ -1,0 +1,92 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Pay for {{ serviceName }}</h4>
+  <button type="button" class="close" aria-label="Close" (click)="onCloseModal()">
+  <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <aw-wizard #wizard 
+      [navBarLayout]="'large-empty-symbols'"
+      [disableNavigationBar]="true"
+  >
+    <aw-wizard-step [stepTitle]="'Instructions'" [navigationSymbol]="{ symbol: '1' }">
+      <div class="jumbotron">
+        <div class="container">
+          <ul>
+            <li>Please verify your payment matches the amount due in crypto <strong>exactly</strong></li>
+            <li>If the payment is insufficient, the <strong>remaining</strong> amount is shown</li>
+            <li>If too much is paid, the remaining amount will be <strong>send back</strong></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="centered-content">
+        <div class="btn-group">
+          <button type="button" class="btn btn-secondary" awNextStep>Continue</button>
+        </div>
+      </div>  
+    </aw-wizard-step>
+    <aw-wizard-step [stepTitle]="'Coins'" [navigationSymbol]="{ symbol: '2' }">
+      <div class="centered-content">
+        <div class="centered-content">
+          <div class="list-group" style="overflow-y: auto;max-height: 700px;">
+          <button type="button" class="list-group-item list-group-item-action" *ngFor="let c of coins" (click)="onSelectCoin(c)">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{c.name}}</h5>
+              </div>
+              <small>1 {{c.ticker}}  = {{c.price}} BLOCK</small>
+            </button>
+          </div>
+          <div class="text-center py-3">
+            <p>Powered by</p>
+            <img src="../../../assets/cclogo.png" width="25" alt="">
+            <span class="mb-0 ml-1">
+              <a href="https://cloudchainsinc.com">CloudChains, inc.</a>
+            </span>
+          </div>
+        </div>
+      </div>
+    </aw-wizard-step>
+    <aw-wizard-step [stepTitle]="'Payment'" [navigationSymbol]="{ symbol: '3' }" (stepEnter)="enterLastStep($event)">
+      <div class="centered-content">
+        <qrcode 
+          [qrdata]="qrdata" 
+          [width]="384" 
+          [elementType]="canvas" 
+          [errorCorrectionLevel]="'M'" 
+          [version]="4">
+        </qrcode>
+        <div class="jumbotron">
+          <p>Coin: <strong>{{ selectedCoin?.name}}</strong></p>
+          <p>Address: <strong>{{address}}</strong></p>
+          <p>Amount due: <strong>{{paymentFee}} {{selectedCoin?.ticker}}</strong></p>
+          <p>Time Remaining: <strong><countdown #cd [config]="cdConfig" (event)="handleCountDownEvent($event)"></countdown></strong></p>
+        </div>
+        <div class="btn-group">
+          <button type="button" class="btn btn-secondary" (click)="onCloseModal()">Cancel Transaction</button>
+        </div>
+      </div>
+    </aw-wizard-step>
+    <aw-wizard-completion-step [stepTitle]="'Completion'" [navigationSymbol]="{ symbol: '4'}"> 
+      <div class="centered-content">
+        <div *ngIf="paymentReceived">
+          <p>Transaction Received!</p>
+          <p>Confirmations: ({{ confirmations }}/2)</p>
+          <p *ngIf="confirmations < 2; else success">
+            Waiting for sufficient confirmations...
+          </p>
+          <ng-template #success>
+            <p>Transaction Confirmed!</p>
+            <p>Executing {{ serviceName }}...</p>
+          </ng-template>
+
+        </div>
+
+        <p *ngIf="timeElapsed">
+          Payment not received in time. Try again!
+        </p>
+        <button type="button" class="btn btn-secondary" (click)="onCloseModal()" *ngIf="paymentReceived && confirmations >= 2">Close</button>
+      </div>
+    </aw-wizard-completion-step>
+  </aw-wizard>
+</div>

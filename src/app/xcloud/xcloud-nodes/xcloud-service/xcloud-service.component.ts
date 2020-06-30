@@ -23,6 +23,7 @@ import { BreadcrumbsService} from '../../../ui/breadcrumb/breadcrumbs.service';
             [nodePubKey]="nodePubKey"
             [serviceInfo]="serviceInfo"
             [serviceResult]="serviceResult"
+            [coins]="coins"
             (onXCloudSubmit)="onXCloudSubmit($event)">
   `
 })
@@ -34,6 +35,61 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
   serviceInfo:any;
   serviceResult: any;
   breadcrumbs: any[];
+
+  coins:any[] = [
+    // {
+    //   ticker: 'BAY',
+    //   name: 'BitBay',   
+    // },
+    {
+      ticker: 'BLOCK',
+      name: 'Blocknet',   
+    },
+    // {
+    //   ticker: 'BTC',
+    //   name: 'Bitcoin',   
+    // },
+    {
+      ticker: 'LTC',
+      name: 'Litecoin',   
+    },
+    // {
+    //   ticker: 'DOGE',
+    //   name: 'Dogecoin',   
+    // },
+    // {
+    //   ticker: 'DASH',
+    //   name: 'Dash',   
+    // },
+    // {
+    //   ticker: 'SYS',
+    //   name: 'Syscoin',   
+    // },
+    // {
+    //   ticker: 'DGB',
+    //   name: 'Digibyte',   
+    // },
+    // {
+    //   ticker: 'PIVX',
+    //   name: 'Pivx',   
+    // },
+    // {
+    //   ticker: 'TZC',
+    //   name: 'Trezarcoin',   
+    // },
+    // {
+    //   ticker: 'XLQ',
+    //   name: 'ALQO',   
+    // },
+    // {
+    //   ticker: 'RVN',
+    //   name: 'Ravencoin',   
+    // },
+    // {
+    //   ticker: 'POLIS',
+    //   name: 'Polis',   
+    // },
+  ]
 
 
   constructor(
@@ -66,10 +122,19 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
   private initializeData(){
     // var observableIsServiceNodeVerified: Observable<boolean> = this.myServiceNodesService.isServiceNodeVerified(this.nodePubKey);
     var observableServiceNodeInfo: Observable<any> = this.serviceNodeService.GetServiceInfo(this.serviceName);
+    var observableMultiPrice : Observable<any> = this.xcloudService.Service(new ServiceRequest("xrs::CCMultiPrice", [this.coins.map(c => c.ticker).join(), "BLOCK"], 1));
 
-    forkJoin([observableServiceNodeInfo]).pipe(takeUntil(this.ngUnsubscribe)).subscribe(([serviceInfo]) =>{
+    forkJoin([observableServiceNodeInfo, observableMultiPrice]).pipe(takeUntil(this.ngUnsubscribe)).subscribe(([serviceInfo, multiPriceInfo]) =>{
       this.serviceInfo = serviceInfo;
       this.nodePubKey = this.serviceInfo.node.nodePubKey;
+
+      if(serviceInfo.service.fee > 0){
+        this.coins.forEach(coin => {
+          if(multiPriceInfo.reply[coin.ticker] !== undefined)
+            coin.price = multiPriceInfo.reply[coin.ticker]["BLOCK"];
+        });
+      }
+      
     }, err => {
       // if(err.status == 404)
       console.log(err)

@@ -16,6 +16,6 @@ export class XCloudService extends BaseService{
 
   Service(request:any){
     let url = this.apiEndpoint + '/Service';
-    return this.http.post(url, request);
+    return this.http.post<any>(url, request);
   }
 }

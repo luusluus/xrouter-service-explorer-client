@@ -12,7 +12,7 @@ const routes: Routes = [
   },
   { 
     path: 'nodes', 
-    loadChildren: './xrouter-nodes/xrouter-nodes.module#XrouterNodesModule', 
+    loadChildren: () => import('./xrouter-nodes/xrouter-nodes.module').then(m => m.XrouterNodesModule), 
   }
 ];
 

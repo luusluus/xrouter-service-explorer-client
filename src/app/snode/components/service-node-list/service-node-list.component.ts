@@ -18,7 +18,7 @@ export class ServiceNodeListComponent implements OnInit, OnChanges, AfterViewIni
   @Input() query:any;
   @Output('query-changed') queryChanged = new EventEmitter();
 
-  @ViewChild('searchSNode') searchSNode;
+  @ViewChild('searchSNode', { static: true }) searchSNode;
 
   columns:any=[
     {title: 'SNode Key', key: 'snodeKey'},
