@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, ViewChild, Output, EventEmitter } from '@angular/core';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute } from '@angular/router';
 import { CcSpvService } from '../../cc-spv.service';
@@ -9,8 +9,10 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { Subscription } from 'rxjs';
 import { CountdownComponent } from 'ngx-countdown';
-import { ListUnspent } from '../../models/listunspent.model';
+import { Unspent } from '../../models/listunspent.model';
 import { WizardComponent } from 'angular-archwizard';
+import { MockUtxoServiceService } from '../../mock-utxo-service.service';
+import { ConfirmationDialogService } from '../../../ui/confirmation-dialog/confirmation-dialog.service';
 
 @Component({
   selector: 'app-payment-flow-modal',
@@ -27,56 +29,138 @@ export class PaymentFlowModalComponent implements OnInit, OnDestroy {
   @ViewChild(WizardComponent,  { static: true }) public wizard: WizardComponent;
 
   private signalRSubscription: Subscription;
+  private mockSubscription:Subscription;
 
-  cdConfig = { leftTime: 600, format: 'mm:ss' };
+  cdConfig = { 
+    leftTime: 600, 
+    format: 'mm:ss',
+    demand: true
+  };
+
+  qrdata = 'example';
+
+  selectedCoin:any;
 
   paymentFee:number;
-  qrdata = 'example';
+  amountDue:number;
   address:string;
-  paymentReceived:boolean = false;
-
+  
   timeElapsed:boolean = false;
   
-  confirmations:number;
-  selectedCoin:any;
-  
-  constructor(public activeModal: NgbActiveModal, private signalRService: SignalRService, private http: HttpClient, private ccSpvService:CcSpvService ) {}
+  receivedTransactions: Array<Unspent>;
+  overPaymentSendBack:boolean = false;
+
+  constructor(
+    public activeModal: NgbActiveModal, 
+    private signalRService: SignalRService, 
+    private http: HttpClient, 
+    private ccSpvService:CcSpvService,
+    private mockUtxoService:MockUtxoServiceService,
+    private confirmationDialogService: ConfirmationDialogService
+    ) {}
 
   ngOnInit() {
-    this.paymentReceived = false;
     this.timeElapsed = false;
+    this.receivedTransactions = [];
+    this.overPaymentSendBack = false;
   }
 
   ngOnDestroy(): void {
     this.signalRService.endConnection();
-    this.signalRSubscription.unsubscribe();
+    if(this.signalRSubscription)
+      this.signalRSubscription.unsubscribe();
   }
 
-  private startHttpRequest = (coinName:string) => {
-    this.http.get(environment.ccSpvApiUrl + coinName.toLowerCase() + '/listunspent')
-      .subscribe(res => {
-        console.log(res);
-      })
+  private startTransferListUnspent = (coinName:string) => {
+    this.http.get(environment.ccSpvApiUrl + 'lw/' + coinName.toLowerCase() + '/TransferListUnspent')
+      .subscribe(() => {})
   }
 
-  enterLastStep(event:any){
+  enterPaymentStep(event:any){
     this.countdown.begin();
+    this.receivedTransactions = [];
+    this.amountDue = this.paymentFee;
 
+    // this.mockUtxoService.address = this.address;
+    // this.mockUtxoService.initMock();
+    // this.mockUtxoService.startTimer();
+    
+    // this.mockSubscription = this.mockUtxoService.getListUnspent().subscribe((listUnspentData:Unspent[]) => {
+    //   if(listUnspentData !== undefined){
+    //     const unspent = listUnspentData.find(us => us.address === this.address && us.confirmations === 0);
+    //       if(unspent != undefined){            
+    //         this.amountDue = this.amountDue - unspent.amount;
+    //         if( this.amountDue === 0 || this.amountDue < 0){
+    //           this.countdown.stop();
+
+    //           if(!this.wizard.isLastStep()){
+    //             this.wizard.goToNextStep();
+    //           }
+    //         }
+    //         this.receivedTransactions.push(unspent);
+    //       }
+    //   }
+    //   if(this.areAllUtxosConfirmed()){
+    //     this.mockUtxoService.stopTimer();
+    //     this.mockSubscription.unsubscribe();
+
+    //     if(this.amountDue < 0){
+    //       console.log('sending back...')          
+    //       this.ccSpvService.HandleOverPayment(this.selectedCoin.ticker, Math.abs(this.amountDue), this.receivedTransactions.map(rt => rt.txid), this.address)
+    //         .subscribe(txhex => {
+    //           console.log(txhex);
+    //           console.log('sent back');
+    //           this.overPaymentSendBack = true;
+    //         },
+    //         err => {
+    //           console.log(err);
+    //         })
+    //     }
+    //   }
+    // });
     this.signalRService.startConnection();
     this.signalRService.addTransferListUnspentDataListener();
-    this.startHttpRequest(this.selectedCoin.name);
+    this.startTransferListUnspent(this.selectedCoin.ticker);
 
-    this.signalRSubscription = this.signalRService.getListUnspent().subscribe(
-      (listUnspentData : ListUnspent[]) => {
-        const unspent = listUnspentData.find(us => us.address === this.address);
-        if(unspent != undefined){
-          this.paymentReceived = true;
-          console.log('payment received');
-          console.log('confirmations: ' + unspent.confirmations )
-          this.confirmations = unspent.confirmations;
-          if(unspent.amount === this.paymentFee){
-            this.countdown.stop();
-            this.wizard.goToNextStep();
+    this.signalRSubscription = this.signalRService.getListUnspent().subscribe((listUnspentData:Unspent[]) => {
+        if(listUnspentData !== undefined){
+          const unspent = listUnspentData.find(us => us.address === this.address && us.confirmations === 0);
+          if(unspent != undefined){  
+            if(!this.receivedTransactions.some(rt => rt.txid === unspent.txid)){
+              console.log(unspent)
+              this.amountDue = this.amountDue - unspent.amount;
+              if( this.amountDue === 0 || this.amountDue < 0){
+                this.countdown.stop();
+  
+                if(!this.wizard.isLastStep()){
+                  this.wizard.goToNextStep();
+                }
+              }
+              this.receivedTransactions.push(unspent);
+            }
+            else if(this.receivedTransactions.some(rt => rt.txid === unspent.txid && rt.confirmations != unspent.amount)){
+              console.log(unspent)
+              const idx = this.receivedTransactions.findIndex((rt => rt.txid === unspent.txid));
+              this.receivedTransactions[idx].confirmations = unspent.confirmations;
+            }    
+          }
+        }
+        if(this.areAllUtxosConfirmed()){
+          console.log('all confirmed')
+          this.signalRService.removeTransferListUnspentDataListener();
+          this.signalRService.endConnection();
+  
+          if(this.amountDue < 0){
+            console.log('sending back...')          
+            this.ccSpvService.HandleOverPayment(this.selectedCoin.ticker, Math.abs(this.amountDue), this.receivedTransactions.map(rt => rt.txid), this.address)
+              .subscribe(txhex => {
+                console.log(txhex);
+                console.log('sent back');
+                this.overPaymentSendBack = true;
+              },
+              err => {
+                console.log(err);
+              })
           }
         }
     });
@@ -84,27 +168,71 @@ export class PaymentFlowModalComponent implements OnInit, OnDestroy {
 
   onSelectCoin(coin:any){
     this.selectedCoin = coin;
-    this.paymentFee = (this.serviceFee / this.selectedCoin.price) * (1 + 0.01);
+    // this.paymentFee = (this.serviceFee / this.selectedCoin.price) * (1 + 0.01);
+    this.paymentFee = this.serviceFee;
 
-    this.ccSpvService.GetNewAddress(this.selectedCoin.name).subscribe(addr => {
+    this.ccSpvService.GetAddress(this.selectedCoin.ticker).subscribe(addr => {
       this.qrdata = this.selectedCoin.name + ":" + addr;
       this.address = <string> addr;
+
       this.wizard.goToNextStep();
     });
   }
 
-  onCloseModal(){
-    if(this.paymentReceived && this.confirmations < 2) 
-      return;
+  onCloseModal(reason:string){
+    if(reason === 'cancel'){
 
-    this.signalRService.removeTransferListUnspentDataListener();
-
-    if(this.paymentReceived && this.confirmations >= 2)
+      if(this.timeElapsed){
+        this.activeModal.close('Canceled');
+        return;
+      }
+      
+      if(this.areAllUtxosConfirmed()){
+        this.signalRService.removeTransferListUnspentDataListener();
+        this.signalRService.endConnection();
+        this.activeModal.close('Canceled')
+        // this.activeModal.close('Paid');
+        return;
+      }
+      this.confirmationDialogService.confirm('Please Confirm', 'Do you really want to cancel this payment?', 'Yes', 'No', 'sm')
+        .then((confirmed) => {
+          if(confirmed)
+            this.activeModal.dismiss('Canceled payment');
+          return;
+        })
+        .catch(() => {
+          //dismiss
+          return;
+        });
+      
+      if(this.receivedTransactions.some(rt => rt.confirmations < 2)){
+        // Partial payments have been received. Are you sure you want to cancel?
+        // If yes, then partial payments will be send back
+        // if not return
+        return;
+      }
+    }
+    else if(reason === 'paid'){
+      this.signalRService.removeTransferListUnspentDataListener();
+      this.signalRService.endConnection();
+  
       this.activeModal.close('Paid');
-    else
-      this.activeModal.close('Closed');
+    }
   }
   
+  areThereUnconfirmedUtxos(){
+    if(this.receivedTransactions.length === 0)
+      return false;
+    return this.receivedTransactions.some(rt => rt.confirmations < 2);
+  } 
+
+  areAllUtxosConfirmed(){
+    if(this.receivedTransactions.length === 0)
+      return false;
+    
+    return this.receivedTransactions.every(rt => rt.confirmations >= 2);
+  }
+
   handleCountDownEvent(event:any){
     if(event.action === 'done'){
       this.signalRService.removeTransferListUnspentDataListener();

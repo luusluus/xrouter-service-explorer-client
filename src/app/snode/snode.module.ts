@@ -15,6 +15,7 @@ import { ServiceNodeListComponent } from './components/service-node-list/service
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { LoadingInterceptor } from '../ui/spinner/interceptors/loading.interceptor';
 import { SpinnerModule } from '../ui/spinner/spinner.module';
+import { ClipboardModule } from 'ngx-clipboard';
 
 @NgModule({
   imports: [
@@ -22,6 +23,7 @@ import { SpinnerModule } from '../ui/spinner/spinner.module';
     FormsModule,
     ReactiveFormsModule,
     NgbModule,
+    ClipboardModule,
 
     BlocknetCommonModule,
     TabsModule,

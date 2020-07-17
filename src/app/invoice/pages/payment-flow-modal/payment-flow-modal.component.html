@@ -1,6 +1,6 @@
 <div class="modal-header">
   <h4 class="modal-title" id="modal-basic-title">Pay for {{ serviceName }}</h4>
-  <button type="button" class="close" aria-label="Close" (click)="onCloseModal()">
+  <button type="button" class="close" aria-label="Close" (click)="onCloseModal('cancel')">
   <span aria-hidden="true">&times;</span>
   </button>
 </div>
@@ -16,13 +16,15 @@
             <li>Please verify your payment matches the amount due in crypto <strong>exactly</strong></li>
             <li>If the payment is insufficient, the <strong>remaining</strong> amount is shown</li>
             <li>If too much is paid, the remaining amount will be <strong>send back</strong></li>
+            <li>If payments are received after time slot has elapsed, it will be <strong>send back</strong></li>
+            <li>A 1% fee is taken into account in order to pay for transaction fees and commission for the service.</li>
           </ul>
         </div>
       </div>
       
       <div class="centered-content">
         <div class="btn-group">
-          <button type="button" class="btn btn-secondary" awNextStep>Continue</button>
+          <button type="button" class="btn btn-primary" awNextStep>Continue</button>
         </div>
       </div>  
     </aw-wizard-step>
@@ -47,45 +49,99 @@
         </div>
       </div>
     </aw-wizard-step>
-    <aw-wizard-step [stepTitle]="'Payment'" [navigationSymbol]="{ symbol: '3' }" (stepEnter)="enterLastStep($event)">
+    <aw-wizard-step [stepTitle]="'Payment'" [navigationSymbol]="{ symbol: '3' }" (stepEnter)="enterPaymentStep($event)">
       <div class="centered-content">
         <qrcode 
           [qrdata]="qrdata" 
-          [width]="384" 
+          [width]="256" 
           [elementType]="canvas" 
           [errorCorrectionLevel]="'M'" 
           [version]="4">
         </qrcode>
-        <div class="jumbotron">
-          <p>Coin: <strong>{{ selectedCoin?.name}}</strong></p>
+        <div class="highlight-invoice">
+          <p>Coin: <strong>{{selectedCoin?.name}}</strong></p>
           <p>Address: <strong>{{address}}</strong></p>
-          <p>Amount due: <strong>{{paymentFee}} {{selectedCoin?.ticker}}</strong></p>
+          <p>Amount due: <strong>{{ amountDue }} {{selectedCoin?.ticker}}</strong></p>
+          
           <p>Time Remaining: <strong><countdown #cd [config]="cdConfig" (event)="handleCountDownEvent($event)"></countdown></strong></p>
         </div>
-        <div class="btn-group">
-          <button type="button" class="btn btn-secondary" (click)="onCloseModal()">Cancel Transaction</button>
+        <div *ngIf="receivedTransactions.length > 0">
+          <h5>Received Transactions</h5>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Transaction Id</th>
+                <th>Amount</th>
+                <th>Confirmations</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr  *ngFor="let rt of receivedTransactions">
+                <td class="ellipsis">{{ rt.txid }}</td>
+                <td>{{ rt.amount }}</td>
+                <td>{{ rt.confirmations }} / 2</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+        <hr>
+        <button type="button" class="btn btn-danger" (click)="onCloseModal('cancel')">Cancel Payment</button>
+        
       </div>
     </aw-wizard-step>
     <aw-wizard-completion-step [stepTitle]="'Completion'" [navigationSymbol]="{ symbol: '4'}"> 
-      <div class="centered-content">
-        <div *ngIf="paymentReceived">
-          <p>Transaction Received!</p>
-          <p>Confirmations: ({{ confirmations }}/2)</p>
-          <p *ngIf="confirmations < 2; else success">
-            Waiting for sufficient confirmations...
-          </p>
-          <ng-template #success>
-            <p>Transaction Confirmed!</p>
-            <p>Executing {{ serviceName }}...</p>
-          </ng-template>
-
+      <div class="centered-content">  
+        <div *ngIf="timeElapsed; else not_elapsed">
+          <div class="alert alert-info" role="alert" >
+            Payment not received in time!
+          </div>
+          <!--TODO: Automatically send back funds that are received after time has elapsed-->
+          <!--TODO: Show this in a table and state of transaction-->
+          <button type="button" class="btn btn-primary" (click)="onCloseModal('cancel')">Close</button>
         </div>
+        <ng-template #not_elapsed>
+          <div class="alert alert-info" role="alert" *ngIf="areThereUnconfirmedUtxos()">
+            Waiting for transaction to be confirmed...
+          </div>
 
-        <p *ngIf="timeElapsed">
-          Payment not received in time. Try again!
-        </p>
-        <button type="button" class="btn btn-secondary" (click)="onCloseModal()" *ngIf="paymentReceived && confirmations >= 2">Close</button>
+          <div class="alert alert-warning" role="alert" *ngIf="amountDue < 0">
+            Too much paid! {{-1*amountDue}} {{selectedCoin?.ticker}} will be send back to you after all transactions have been confirmed.
+          </div>
+
+          <div class="alert alert-success" role="alert" *ngIf="overPaymentSendBack">
+            {{-1*amountDue}} {{selectedCoin?.ticker}} has been sent back!
+          </div>
+
+          <h5>Received Transactions</h5>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Transaction Id</th>
+                <th>Amount</th>
+                <th>Confirmations</th>
+                <th>State</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr  *ngFor="let rt of receivedTransactions">
+                <td class="ellipsis">{{ rt.txId }}</td>
+                <td>{{ rt.amount }}</td>
+                <td>{{ rt.confirmations }} / 2</td>
+                <td *ngIf="rt.confirmations < 2">Received</td>
+                <td *ngIf="rt.confirmations >= 2">Confirmed</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="alert alert-success" role="alert" *ngIf="areAllUtxosConfirmed()">
+            Payment succesfully completed!
+          </div>
+
+          <hr>
+          <button [disabled]="!areAllUtxosConfirmed()" type="button" class="btn btn-success" (click)="onCloseModal('paid')">Execute Service</button>
+          
+          <!--TODO: Show this in a table and state of transaction-->
+        </ng-template>
       </div>
     </aw-wizard-completion-step>
   </aw-wizard>

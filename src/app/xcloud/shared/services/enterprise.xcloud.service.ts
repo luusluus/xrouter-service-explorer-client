@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient , HttpParams} from '@angular/common/http';
+import { HttpClient , HttpParams, HttpHeaders} from '@angular/common/http';
 import { BaseService } from '../../../shared/services/base.service';
+import { EnterpriseServiceRequest } from '../models/enterpriseServiceRequest.model';
 
 
 @Injectable()
@@ -10,12 +11,19 @@ export class EnterpriseXCloudService extends BaseService{
     super();
    }
 
-  Service(name:string, params:string[], endpoint:string){
+  Service(request:EnterpriseServiceRequest){
+    const headers = new HttpHeaders();
+    
     let body = '[]';
-    if(params !== undefined)
-      body = '["' + params.join('","') + '"]';
+    let url = request.endpoint + '/xrs/' + request.service.replace("xrs::","");
+    if(request.params !== undefined)
+        body = '["' + request.params.join('","') + '"]';
 
-    let url = endpoint + '/xrs/' + name.replace("xrs::","");
-    return this.http.post(url, body);
+    if(request.signature && request.rawTxHex){
+      headers.set('XR-Signature', request.signature);
+      headers.set('XR-Pubkey', request.nodePubKey);
+      headers.set('XR-Payment', request.rawTxHex);
+    }
+    return this.http.post(url, body, {headers: headers});
   }
 }

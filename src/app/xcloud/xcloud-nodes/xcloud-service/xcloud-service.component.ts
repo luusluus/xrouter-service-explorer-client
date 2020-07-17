@@ -10,6 +10,8 @@ import { XCloudService } from '../../shared/services/xcloud.service';
 import { EnterpriseXCloudService } from '../../shared/services/enterprise.xcloud.service';
 import { ServiceRequest } from '../../shared/models/servicerequest.model';
 import { BreadcrumbsService} from '../../../ui/breadcrumb/breadcrumbs.service';
+import { CcSpvService } from '../../../invoice/cc-spv.service';
+import { EnterpriseServiceRequest } from '../../shared/models/enterpriseServiceRequest.model';
 
 @Component({
   selector: 'app-xcloud-service',
@@ -22,8 +24,8 @@ import { BreadcrumbsService} from '../../../ui/breadcrumb/breadcrumbs.service';
             [serviceName]="serviceName"
             [nodePubKey]="nodePubKey"
             [serviceInfo]="serviceInfo"
-            [serviceResult]="serviceResult"
-            [coins]="coins"
+            [serviceCallResult]="serviceCallResult"
+            [coins]="availableCoins"
             (onXCloudSubmit)="onXCloudSubmit($event)">
   `
 })
@@ -33,64 +35,9 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
   serviceName:string;
   nodePubKey:string;
   serviceInfo:any;
-  serviceResult: any;
+  serviceCallResult: any;
+  availableCoins:any;
   breadcrumbs: any[];
-
-  coins:any[] = [
-    // {
-    //   ticker: 'BAY',
-    //   name: 'BitBay',   
-    // },
-    {
-      ticker: 'BLOCK',
-      name: 'Blocknet',   
-    },
-    // {
-    //   ticker: 'BTC',
-    //   name: 'Bitcoin',   
-    // },
-    {
-      ticker: 'LTC',
-      name: 'Litecoin',   
-    },
-    // {
-    //   ticker: 'DOGE',
-    //   name: 'Dogecoin',   
-    // },
-    // {
-    //   ticker: 'DASH',
-    //   name: 'Dash',   
-    // },
-    // {
-    //   ticker: 'SYS',
-    //   name: 'Syscoin',   
-    // },
-    // {
-    //   ticker: 'DGB',
-    //   name: 'Digibyte',   
-    // },
-    // {
-    //   ticker: 'PIVX',
-    //   name: 'Pivx',   
-    // },
-    // {
-    //   ticker: 'TZC',
-    //   name: 'Trezarcoin',   
-    // },
-    // {
-    //   ticker: 'XLQ',
-    //   name: 'ALQO',   
-    // },
-    // {
-    //   ticker: 'RVN',
-    //   name: 'Ravencoin',   
-    // },
-    // {
-    //   ticker: 'POLIS',
-    //   name: 'Polis',   
-    // },
-  ]
-
 
   constructor(
     private xcloudService:XCloudService,
@@ -98,6 +45,7 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
     private router:Router,
     private route:ActivatedRoute, 
     private serviceNodeService: ServiceNodeService,
+    private ccSpvService: CcSpvService,
     private breadcrumbsService:BreadcrumbsService
     ) 
     { 
@@ -122,21 +70,25 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
   private initializeData(){
     // var observableIsServiceNodeVerified: Observable<boolean> = this.myServiceNodesService.isServiceNodeVerified(this.nodePubKey);
     var observableServiceNodeInfo: Observable<any> = this.serviceNodeService.GetServiceInfo(this.serviceName);
-    var observableMultiPrice : Observable<any> = this.xcloudService.Service(new ServiceRequest("xrs::CCMultiPrice", [this.coins.map(c => c.ticker).join(), "BLOCK"], 1));
+    var observableAvailableCoins: Observable<any> = this.ccSpvService.GetAvailableCoins();
+    
 
-    forkJoin([observableServiceNodeInfo, observableMultiPrice]).pipe(takeUntil(this.ngUnsubscribe)).subscribe(([serviceInfo, multiPriceInfo]) =>{
+    forkJoin(
+      [
+        observableServiceNodeInfo,
+        observableAvailableCoins
+      ])
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe((
+          [
+            serviceInfo,
+            coins
+          ]
+          ) =>{
       this.serviceInfo = serviceInfo;
-      this.nodePubKey = this.serviceInfo.node.nodePubKey;
-
-      if(serviceInfo.service.fee > 0){
-        this.coins.forEach(coin => {
-          if(multiPriceInfo.reply[coin.ticker] !== undefined)
-            coin.price = multiPriceInfo.reply[coin.ticker]["BLOCK"];
-        });
-      }
-      
+      this.availableCoins = coins;     
+      this.nodePubKey = this.serviceInfo.node.nodePubKey; 
     }, err => {
-      // if(err.status == 404)
       console.log(err)
       this.router.navigate(['/error'], {queryParams: err});
     });
@@ -157,28 +109,51 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
   onXCloudSubmit(xCloudInput:any) { 
     const parameterValues = xCloudInput.parameterValues;
     const enterprise = xCloudInput.callEXRDirectly;
-    if(enterprise)
-      this.enterpriseXCloudService.Service(this.serviceName, parameterValues, 'http://' + this.serviceInfo.node.host + ':' + this.serviceInfo.node.port)
+    console.log(xCloudInput)
+
+    if(enterprise){
+      let serviceRequest = new EnterpriseServiceRequest();
+      serviceRequest.endpoint = 'http://' + this.serviceInfo.node.host + ':' + this.serviceInfo.node.port;
+      serviceRequest.params = parameterValues;
+      serviceRequest.service = this.serviceName;
+
+      if(this.serviceInfo.service.fee > 0){
+        serviceRequest.nodePubKey = this.nodePubKey;
+        serviceRequest.signature = xCloudInput.signature;
+        serviceRequest.rawTxHex = xCloudInput.rawTxHex;
+      }
+
+      console.log(serviceRequest);
+
+      this.xcloudService.ServiceEnterprise(serviceRequest)
       .pipe(
         finalize(() => {
       }))  
       .subscribe(result => {
-          this.serviceResult = {...result};
-        },
-        error => {
-          this.serviceResult = this.serviceResult = {...error};
-        });    
-    else
-      this.xcloudService.Service(new ServiceRequest(this.serviceName, parameterValues, 1))
+        console.log(result)
+        this.serviceCallResult = {...result};
+      },
+      error => {
+        console.log(error)
+        this.serviceCallResult = this.serviceCallResult = {...error};
+      });    
+    }
+    else{
+      let serviceRequest = new ServiceRequest();
+      serviceRequest.service = this.serviceName;
+      serviceRequest.parameters = parameterValues;
+      serviceRequest.nodecount = 1;
+      this.xcloudService.Service(serviceRequest)
       .pipe(
         finalize(() => {
       }))  
       .subscribe(result => {
-          this.serviceResult = result;
+          this.serviceCallResult = result;
         },
         error => {
-          this.serviceResult = error;
+          this.serviceCallResult = error;
         });    
+    }
   }
 
   ngOnDestroy(){

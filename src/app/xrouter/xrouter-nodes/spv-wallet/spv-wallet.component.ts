@@ -35,7 +35,7 @@ export class SpvWalletComponent implements OnInit, OnDestroy {
   spvWalletName: string;
   nodePubKey: string;
   resultLoading: boolean;
-  spvWalletCommandResult: string;
+  spvWalletCommandResult: any;
 
   breadcrumbs:any[];
 
@@ -92,10 +92,10 @@ export class SpvWalletComponent implements OnInit, OnDestroy {
           finalize(() => {
         }))
         .subscribe(result => {
-          this.spvWalletCommandResult = JSON.stringify(result, undefined, 2);
+          this.spvWalletCommandResult = result;
         },
         error => {
-          this.spvWalletCommandResult = JSON.stringify(error.error, undefined, 2);
+          this.spvWalletCommandResult = error;
         });
   }
 

@@ -2,9 +2,6 @@ import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnChanges, S
 import { Subject, Subscription } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { SpvWalletInfo } from '../../../snode/shared/models/spvWalletInfo.model';
-import { LoadingService} from '../../../ui/spinner/shared/services/loading.service';
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
-import { BreadcrumbsService } from '../../../ui/breadcrumb/breadcrumbs.service';
 
 @Component({
   selector: 'app-spv-wallet-details',
@@ -16,7 +13,7 @@ export class SpvWalletDetailsComponent implements OnInit, OnChanges {
   @Input() spvWalletInfo:SpvWalletInfo;
   @Input() spvWalletName:string;
   @Input() nodePubKey:string;
-  @Input() spvWalletCommandResult:string;
+  @Input() spvWalletCommandResult:any;
   @Output() onSPVSubmit = new EventEmitter();
   
   executing: boolean;
@@ -36,10 +33,7 @@ export class SpvWalletDetailsComponent implements OnInit, OnChanges {
   
   breadcrumbs:any[];
 
-  constructor(
-    ) {
-      // this.router.routeReuseStrategy.sho uldReuseRoute = () => false;
-   }
+  constructor() {}
 
   ngOnInit() {
     this.shortSpvWalletName = this.spvWalletName.replace("xr::", "");
@@ -48,11 +42,10 @@ export class SpvWalletDetailsComponent implements OnInit, OnChanges {
 
     if(this.spvWalletInfo.node.type == 'Enterprise'){
       // this.callEXRDirectly = true;
-    }
-    
+    }    
   }
 
-  ngOnChanges(changes: SimpleChanges){    
+  ngOnChanges(changes: SimpleChanges){  
     this.executing = false;
   }
 

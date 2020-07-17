@@ -38,22 +38,33 @@
     <ngb-tab title="Configuration">
         <ng-template ngbTabContent>
             <h3>xrouter.conf</h3>
-            <pre>
-              <code>{{serviceNodeInfo?.config}}</code>
-            </pre>
-            <!-- <div class="well overflow-visible" style="white-space: pre-line"> -->
-            <!-- </div>             -->
+            <button
+            class="btn btn-outline-dark copy-code-btn"
+            type="button"
+            ngxClipboard
+            [cbContent]="serviceNodeInfo?.config"
+            ngbTooltip="Copied" 
+            triggers="click:blur"
+        >
+            Copy
+        </button>
+        <pre [innerHTML]="serviceNodeInfo?.config"></pre>
         </ng-template>
     </ngb-tab>        
     <ngb-tab title="Spv Wallets">
         <ng-template ngbTabContent>
-          <h3>Spv Wallets offered by this Service Node</h3>  
+          <h3>SPV Wallets offered by this Service Node</h3>  
             <table class="table table-striped">
-                <tbody>
-                  <tr *ngFor="let spvWallet of serviceNodeInfo?.spvWallets">
-                    <td><a [routerLink]="['/spv-wallets/nodes', 'xr::' + spvWallet, nodePubKey]">{{spvWallet}}</a></td>
-                  </tr>
-                </tbody>
+              <thead>
+                <tr>
+                    <th>SPV Wallet</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let spvWallet of serviceNodeInfo?.spvWallets">
+                  <td><a [routerLink]="['/spv-wallets/nodes', 'xr::' + spvWallet, nodePubKey]">{{spvWallet}}</a></td>
+                </tr>
+              </tbody>
             </table>
         </ng-template>
       </ngb-tab>

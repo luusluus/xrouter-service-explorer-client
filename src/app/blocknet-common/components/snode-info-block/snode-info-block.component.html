@@ -1,6 +1,8 @@
 <div class="pane">
   <h3>Service Node</h3>
   <hr>
+  <h4 class="black-50 f5">Type</h4>
+  <p class="black-80 fw6"> {{snodeInfo.type }}</p>
   <h4 class="black-50 f5">Snode Key</h4>
   <p>
     <a class="truncate fw6" [routerLink]="['/xrouter-snodes', snodeInfo.nodePubKey]">{{snodeInfo.nodePubKey}}</a>
@@ -10,8 +12,6 @@
   <p>
     <a class="truncate fw6" href="https://chainz.cryptoid.info/block/address.dws?{{snodeInfo.paymentAddress}}">{{snodeInfo.paymentAddress}}</a>
   </p>
-  <h4 class="black-50 f5">Type</h4>
-  <p class="black-80 fw6"> {{snodeInfo.type }}</p>
-  <h4 class="black-50 f5">Default Fee</h4>
-  <p class="black-80 fw6">{{snodeInfo.feeDefault}} BLOCK</p>
+  <!-- <h4 class="black-50 f5">Default Fee</h4>
+  <p class="black-80 fw6">{{snodeInfo.feeDefault}} BLOCK</p> -->
 </div>

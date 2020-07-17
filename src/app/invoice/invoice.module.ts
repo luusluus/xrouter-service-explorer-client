@@ -5,11 +5,12 @@ import { ArchwizardModule } from 'angular-archwizard';
 import { QRCodeModule } from 'angularx-qrcode';
 import { CountdownModule } from 'ngx-countdown';
 
-
-
 import { PaymentFlowModalComponent } from './pages/payment-flow-modal/payment-flow-modal.component';
 import { CcSpvService } from './cc-spv.service';
 import { SignalRService } from './signal-r.service';
+import { MockUtxoServiceService } from './mock-utxo-service.service';
+import { ConfirmationDialogModule } from '../ui/confirmation-dialog/confirmation-dialog.module';
+import { ConfirmationDialogComponent } from '../ui/confirmation-dialog/confirmation-dialog/confirmation-dialog.component';
 
 @NgModule({
   declarations: [PaymentFlowModalComponent],
@@ -18,12 +19,13 @@ import { SignalRService } from './signal-r.service';
     NgbModule,
     ArchwizardModule,
     QRCodeModule,
-    CountdownModule 
+    CountdownModule,
+    ConfirmationDialogModule
   ],
   exports:[
     PaymentFlowModalComponent
   ],
-  providers:[CcSpvService, SignalRService],
-  entryComponents: [PaymentFlowModalComponent]
+  providers:[CcSpvService, SignalRService, MockUtxoServiceService],
+  entryComponents: [PaymentFlowModalComponent, ConfirmationDialogComponent]
 })
 export class InvoiceModule { }

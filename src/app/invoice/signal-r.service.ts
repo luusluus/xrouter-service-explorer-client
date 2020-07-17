@@ -1,6 +1,6 @@
 import { Injectable, isDevMode } from '@angular/core';
 import * as signalR from '@aspnet/signalr';
-import { ListUnspent} from './models/listunspent.model';
+import { Unspent} from './models/listunspent.model';
 import { environment } from '../../environments/environment';
 import { DataModel } from './models/data.model';
 import { Subject, Observable } from 'rxjs';
@@ -9,17 +9,17 @@ import { Subject, Observable } from 'rxjs';
 })
 export class SignalRService {
 
-  private listUnspent$: Subject<ListUnspent[]>;
+  private listUnspent$: Subject<Unspent[]>;
   
-  public data: ListUnspent[];
+  public data: Unspent[];
 
   private hubConnection: signalR.HubConnection
 
   constructor(){
-    this.listUnspent$ = new Subject<ListUnspent[]>();
+    this.listUnspent$ = new Subject<Unspent[]>();
   }
 
-  public getListUnspent(): Observable<ListUnspent[]> {
+  public getListUnspent(): Observable<Unspent[]> {
     return this.listUnspent$.asObservable();
   }
 
@@ -41,7 +41,8 @@ export class SignalRService {
   }
 
   public endConnection = () => {
-    this.hubConnection.stop();
+    if(this.hubConnection)
+      this.hubConnection.stop();
   }
 
   callback = (data) => {

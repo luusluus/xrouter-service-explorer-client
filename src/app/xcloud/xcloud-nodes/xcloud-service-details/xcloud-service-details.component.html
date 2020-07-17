@@ -6,10 +6,14 @@
           <my-tab tabTitle="Readme">
             <h3>{{serviceName}}</h3>
             <hr>
-            <h6>Description</h6>
-            <p>{{serviceInfo.service.description}}</p>
-            <h6>Help</h6>
-            <p>{{serviceInfo.service.help}}</p>
+            <div *ngIf ="serviceInfo.service.description">
+              <h6>Description</h6>
+              <p [innerHTML]="serviceInfo.service.description" style="white-space:pre-wrap"></p>
+            </div>
+            <div *ngIf="serviceInfo.service.help">
+              <h6>Help</h6>
+              <p [innerHTML]="serviceInfo.service.help" style="white-space:pre-wrap"></p>
+            </div>
             <h6>Fee</h6>
             <p>{{serviceInfo.service.fee}} BLOCK</p>
             <div *ngIf="serviceInfo.service.parameters">
@@ -29,11 +33,11 @@
             <hr>
             <div *ngIf="serviceInfo.service.description">
               <h6>Description</h6>
-              <p>{{serviceInfo.service.description}}</p>
+              <p [innerHTML]="serviceInfo.service.description" style="white-space:pre-wrap"></p>
             </div>
             <div *ngIf="serviceInfo.service.help">
               <h6>Help</h6>
-              <p>{{serviceInfo.service.help}}</p>
+              <p [innerHTML]="serviceInfo.service.help" style="white-space:pre-wrap"></p>
             </div>
             <h6>Fee</h6>
             <p>{{serviceInfo.service.fee}} BLOCK</p>
@@ -70,16 +74,22 @@
             <div class="row">
               <div class="col-12">
                 <h4>Response</h4>
-                  <pre>
-                    <code>
-                      <div *ngIf="executing else executed">
-                        Executing...
-                      </div>
-                      <ng-template #executed>
-                        {{ serviceResult | json }}
-                      </ng-template>
-                    </code>
-                  </pre>
+                <button
+                    class="btn btn-outline-dark copy-code-btn"
+                    type="button"
+                    ngxClipboard
+                    [cbContent]="serviceCallResult | json"
+                    ngbTooltip="Copied" 
+                    triggers="click:blur"
+                >
+                    Copy
+                </button>
+                <ng-container *ngIf="executing; else elseTemplate">
+                  <pre [innerHTML]="'Executing...'"></pre>
+                </ng-container>
+                <ng-template #elseTemplate>
+                  <pre [innerHTML]="serviceCallResult | prettyjson:4"></pre>
+              </ng-template>
               </div>
             </div>
             
@@ -88,9 +98,17 @@
             <h3>Configuration file</h3>
             <hr>
             <h4>{{shortServiceName}}.conf</h4>
-            <pre>
-              <code>{{serviceInfo.service.config}}</code>
-            </pre>
+            <button
+                    class="btn btn-outline-dark copy-code-btn"
+                    type="button"
+                    ngxClipboard
+                    [cbContent]="serviceInfo.service.config"
+                    ngbTooltip="Copied" 
+                    triggers="click:blur"
+                >
+                    Copy
+                </button>
+            <pre [innerHTML]="serviceInfo.service.config"></pre>
           </my-tab>
         </div>
         <div class="col-3">

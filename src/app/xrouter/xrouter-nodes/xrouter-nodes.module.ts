@@ -7,6 +7,9 @@ import { SpvWalletsNodesComponent } from './spv-wallets-nodes/spv-wallets-nodes.
 import { SpvWalletComponent } from './spv-wallet/spv-wallet.component';
 import { SpvWalletDetailsComponent } from './spv-wallet-details/spv-wallet-details.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PrettyJsonModule } from 'angular2-prettyjson';
+import { ClipboardModule } from 'ngx-clipboard';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 const routes: Routes = [
   { 
@@ -31,6 +34,10 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    
+    NgbModule,
+    PrettyJsonModule,
+    ClipboardModule,
     
     BlocknetCommonModule,
     TabsModule,

@@ -7,6 +7,9 @@ import { XCloudServiceDetailsComponent } from './xcloud-service-details/xcloud-s
 import { XCloudServiceComponent } from './xcloud-service/xcloud-service.component';
 import { Routes, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PrettyJsonModule } from 'angular2-prettyjson';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ClipboardModule } from 'ngx-clipboard';
 
 
 const routes: Routes = [
@@ -32,7 +35,11 @@ const routes: Routes = [
     CommonModule,
     TabsModule,
     FormsModule,
+
+    NgbModule,
     ReactiveFormsModule,
+    PrettyJsonModule,
+    ClipboardModule,
     
     BlocknetCommonModule,
     RouterModule.forChild(routes)
