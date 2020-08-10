@@ -24,7 +24,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
           
-      - name: Build and push Docker image
+      - name: Build and Publish Docker image
         uses: docker/build-push-action@v1.1.0
         with:
           username: ${{secrets.DOCKER_USER_NAME}}
@@ -32,7 +32,7 @@ jobs:
           repository: xrouterserviceexplorer/service.explorer.client
           tags: ${{ github.sha }}
           
-      - name: Find and Replace
+      - name: Find and Replace deployment manifest
         uses: jacobtomlinson/gha-find-replace@master
         with:
           find: "PLACEHOLDER_IMAGE_LOCATION"
@@ -40,7 +40,7 @@ jobs:
           include: "deployment.yml" 
         
 
-      - name: Test run
+      - name: Deploy Docker Image
         id: test-run
         uses: Jberlinsky/kubernetes-action@master
         env:
