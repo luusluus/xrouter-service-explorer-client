@@ -70,13 +70,13 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
   private initializeData(){
     // var observableIsServiceNodeVerified: Observable<boolean> = this.myServiceNodesService.isServiceNodeVerified(this.nodePubKey);
     var observableServiceNodeInfo: Observable<any> = this.serviceNodeService.GetServiceInfo(this.serviceName);
-    var observableAvailableCoins: Observable<any> = this.ccSpvService.GetAvailableCoins();
+    // var observableAvailableCoins: Observable<any> = this.ccSpvService.GetAvailableCoins();
     
 
     forkJoin(
       [
         observableServiceNodeInfo,
-        observableAvailableCoins
+        // observableAvailableCoins
       ])
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe((
@@ -86,7 +86,7 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
           ]
           ) =>{
       this.serviceInfo = serviceInfo;
-      this.availableCoins = coins;     
+      // this.availableCoins = coins;     
       this.nodePubKey = this.serviceInfo.node.nodePubKey; 
     }, err => {
       console.log(err)
