@@ -25,7 +25,6 @@ import { EnterpriseServiceRequest } from '../../shared/models/enterpriseServiceR
             [nodePubKey]="nodePubKey"
             [serviceInfo]="serviceInfo"
             [serviceCallResult]="serviceCallResult"
-            [coins]="availableCoins"
             (onXCloudSubmit)="onXCloudSubmit($event)">
   `
 })
@@ -36,7 +35,7 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
   nodePubKey:string;
   serviceInfo:any;
   serviceCallResult: any;
-  availableCoins:any[] = ['BLOCK'];
+  availableCoins:any;
   breadcrumbs: any[];
 
   constructor(
@@ -86,7 +85,7 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
           ]
           ) =>{
       this.serviceInfo = serviceInfo;
-      // this.availableCoins = coins;     
+      this.availableCoins = coins;     
       this.nodePubKey = this.serviceInfo.node.nodePubKey; 
     }, err => {
       console.log(err)

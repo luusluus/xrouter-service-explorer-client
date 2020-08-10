@@ -17,7 +17,8 @@ export class XCloudServiceDetailsComponent implements OnInit, OnChanges {
   @Input() nodePubKey:string;
   @Input() serviceInfo:ServiceInfoResult;
   @Input() serviceCallResult:any;  
-  @Input() coins:any;
+  // @Input() coins:any;
+  coins:any;
   @Output() onXCloudSubmit = new EventEmitter();
 
   executing: boolean;
