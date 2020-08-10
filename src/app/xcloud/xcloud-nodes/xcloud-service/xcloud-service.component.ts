@@ -81,11 +81,11 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
         .subscribe((
           [
             serviceInfo,
-            coins
+            // coins
           ]
           ) =>{
       this.serviceInfo = serviceInfo;
-      this.availableCoins = coins;     
+      // this.availableCoins = coins;     
       this.nodePubKey = this.serviceInfo.node.nodePubKey; 
     }, err => {
       console.log(err)
