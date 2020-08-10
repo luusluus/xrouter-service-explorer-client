@@ -36,7 +36,7 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
   nodePubKey:string;
   serviceInfo:any;
   serviceCallResult: any;
-  availableCoins:any;
+  availableCoins:any = [];
   breadcrumbs: any[];
 
   constructor(
