@@ -30,7 +30,14 @@ jobs:
           username: ${{secrets.DOCKER_USER_NAME}}
           password: ${{secrets.DOCKER_PASSWORD}} 
           repository: xrouterserviceexplorer/service.explorer.client
-          tag_with_sha: true
+          tags: ${{ github.sha }}
+          
+      - name: Find and Replace
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          find: "PLACEHOLDER_IMAGE_LOCATION"
+          replace:  xrouterserviceexplorer/service.explorer.client:${{ github.sha }}
+          include: "deployment.yml" 
         
 
       - name: Test run
@@ -39,8 +46,4 @@ jobs:
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
-          args: -n luciendev get pods
-
-      - name: Print image
-        run: 
-          echo ${{ steps.test-run.outputs.result }}
+          args: -n luciendev apply -f deployment.yml
