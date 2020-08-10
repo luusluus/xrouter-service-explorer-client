@@ -4,5 +4,6 @@ export const environment = {
   xrsApiUrl: '/api/xrs',
   snodeApiUrl: '/api/servicenode',
   statisticsApiUrl:'/api/stats',
-  blocknetWalletApiUrl:'/api/blocknet'
+  blocknetWalletApiUrl:'/api/blocknet',
+  ccSpvApiUrl:'/api/ccspv'
 };

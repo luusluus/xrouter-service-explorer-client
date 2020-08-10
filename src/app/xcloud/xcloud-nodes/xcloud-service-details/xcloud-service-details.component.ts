@@ -74,7 +74,7 @@ export class XCloudServiceDetailsComponent implements OnInit, OnChanges {
       );
     }
     else{
-      this.openModal();
+      // this.openModal();
     }
     
   }
