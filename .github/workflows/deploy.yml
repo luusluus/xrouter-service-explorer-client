@@ -10,11 +10,6 @@ on:
   pull_request:
     branches: [ master ]
 
-env:
-  AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY : ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-  
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -24,16 +19,18 @@ jobs:
       - name: Jberlinsky AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: "$AWS_ACCESS_KEY_ID"
-          aws-secret-access-key: "$AWS_SECRET_ACCESS_KEY"
-          aws-region: us-east-1 
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
       - name: Test run
         id: test-run
         uses: Jberlinsky/kubernetes-action@master
         env:
-          KUBE_CONFIG_DATA: "$KUBE_CONFIG_DATA"
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
           args: -n luciendev get pods
-        
-    
+
+      - name: Print image
+        run: 
+          echo ${{ steps.test-run.outputs.result }}
