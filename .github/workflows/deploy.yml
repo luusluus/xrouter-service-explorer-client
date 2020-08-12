@@ -35,10 +35,8 @@ jobs:
       - name: Find and Replace deployment manifest
         uses: jacobtomlinson/gha-find-replace@master
         with:
-          find: "PLACEHOLDER_IMAGE_LOCATION"
-          replace:  xrouterserviceexplorer/service.explorer.client:${{ github.sha }}
-          include: "deployment.yml" 
-        
+          find: PLACEHOLDER_IMAGE_LOCATION
+          replace:  xrouterserviceexplorer/service.explorer.client:${{ github.sha }}        
 
       - name: Deploy Docker Image
         id: test-run
