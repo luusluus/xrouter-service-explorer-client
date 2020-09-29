@@ -41,7 +41,7 @@
                     POST
                   </span>
                   <span class="http-req-url">
-                   http://{{serviceInfo.node.host}}/xrs/{{serviceName}}
+                   http://{{serviceInfo.node.host}}/xrs/{{shortServiceName}}
                   </span>
                 </div>
                 <blockquote><p>Sample Request</p></blockquote>
@@ -49,7 +49,7 @@
                       class="btn btn-outline-dark copy-code-btn"
                       type="button"
                       ngxClipboard
-                      [cbContent]="curlTemplateEnterprise | json"
+                      [cbContent]="curlTemplateEnterprise"
                       ngbTooltip="Copied" 
                       triggers="click:blur"
                 >
