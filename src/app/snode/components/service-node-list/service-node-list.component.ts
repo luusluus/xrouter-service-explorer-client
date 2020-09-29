@@ -22,9 +22,9 @@ export class ServiceNodeListComponent implements OnInit, OnChanges, AfterViewIni
 
   columns:any=[
     {title: 'SNode Key', key: 'snodeKey'},
-    {title: 'Address', key: 'address'},
+    {title: 'Host', key: 'host'},
     {title: 'Type', key: 'type'},
-    {title: 'Status', key: 'status'},
+    // {title: 'Status', key: 'status'},
     {title: 'Spv Wallets', key: 'spvWallets'},
     {title: 'XCloud Services', key: 'xCloudServices'},
   ];
@@ -45,6 +45,7 @@ export class ServiceNodeListComponent implements OnInit, OnChanges, AfterViewIni
   }
 
   ngOnInit() {
+    console.log(this.serviceNodes)
     this.selectedSpvWallets = new Array<string>(this.serviceNodes.items.length);     
     this.selectedXCloudServices = new Array<string>(this.serviceNodes.items.length);
     this.initializeSpvWalletDropdowns(this.serviceNodes)

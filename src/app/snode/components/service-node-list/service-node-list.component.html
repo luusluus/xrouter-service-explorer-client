@@ -14,7 +14,7 @@
           <div class="input-group-prepend">
             <span class="input-group-text">Search</span>
           </div>
-          <input class="form-control" placeholder="Search by Key or Address" #searchSNode>
+          <input class="form-control" placeholder="Search by Key or Host" #searchSNode>
         </div>
   </div>
 </div>
@@ -70,16 +70,17 @@
           </thead>
           <tbody>
                   <tr *ngFor="let sn of serviceNodes?.items; let i = index">
-                      <td>
+                      <td class="snode">
                           <a [routerLink]="[sn.sNodeKey]">{{sn.sNodeKey}}</a>
                       </td>
                       <td>
-                          <a href="https://chainz.cryptoid.info/block/address.dws?{{sn.address}}">
+                          <!-- <a href="https://chainz.cryptoid.info/block/address.dws?{{sn.address}}">
                               {{sn.address}}
-                          </a>    
+                          </a>     -->
+                          {{sn.host}}
                       </td>
                       <td>{{sn.type}}</td>
-                      <td>{{sn.status}}</td>
+                      <!-- <td>{{sn.status}}</td> -->
                       <td>
                           <div *ngIf="sn.spvWallets?.length > 0">
                               <div class="input-group">
