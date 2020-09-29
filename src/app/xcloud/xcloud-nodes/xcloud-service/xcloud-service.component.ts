@@ -7,7 +7,6 @@ import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject, Observable, forkJoin, Subscription } from 'rxjs';
 import { ServiceNodeService } from '../../../snode/shared/services/snode.service';
 import { XCloudService } from '../../shared/services/xcloud.service';
-import { EnterpriseXCloudService } from '../../shared/services/enterprise.xcloud.service';
 import { ServiceRequest } from '../../shared/models/servicerequest.model';
 import { BreadcrumbsService} from '../../../ui/breadcrumb/breadcrumbs.service';
 import { CcSpvService } from '../../../invoice/cc-spv.service';
@@ -40,7 +39,6 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
 
   constructor(
     private xcloudService:XCloudService,
-    private enterpriseXCloudService:EnterpriseXCloudService,
     private router:Router,
     private route:ActivatedRoute, 
     private serviceNodeService: ServiceNodeService,
@@ -108,7 +106,6 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
   onXCloudSubmit(xCloudInput:any) { 
     const parameterValues = xCloudInput.parameterValues;
     const enterprise = xCloudInput.callEXRDirectly;
-    console.log(xCloudInput)
 
     if(enterprise){
       let serviceRequest = new EnterpriseServiceRequest();
@@ -122,14 +119,11 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
         serviceRequest.rawTxHex = xCloudInput.rawTxHex;
       }
 
-      console.log(serviceRequest);
-
       this.xcloudService.ServiceEnterprise(serviceRequest)
       .pipe(
         finalize(() => {
       }))  
       .subscribe(result => {
-        console.log(result)
         this.serviceCallResult = {...result};
       },
       error => {

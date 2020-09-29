@@ -23,18 +23,5 @@ export class XCloudService extends BaseService{
   ServiceEnterprise(request:EnterpriseServiceRequest){
     const url = this.apiEndpoint + '/ServiceEnterprise';
     return this.http.post<any>(url, request);
-    // const headers = new HttpHeaders();
-    
-    // let body = '[]';
-    // let url = request.endpoint + '/xrs/' + request.service.replace("xrs::","");
-    // if(request.params !== undefined)
-    //     body = '["' + request.params.join('","') + '"]';
-
-    // if(request.signature && request.rawTxHex){
-    //   headers.set('XR-Signature', request.signature);
-    //   headers.set('XR-Pubkey', request.nodePubKey);
-    //   headers.set('XR-Payment', request.rawTxHex);
-    // }
-    // return this.http.post(url, body, {headers: headers});
   }
 }

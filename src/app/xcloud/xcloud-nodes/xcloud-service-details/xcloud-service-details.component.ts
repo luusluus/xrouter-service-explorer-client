@@ -6,6 +6,7 @@ import { sha256 } from 'js-sha256';
 import { PaymentFlowModalComponent } from '../../../invoice/pages/payment-flow-modal/payment-flow-modal.component';
 import { CcSpvService } from '../../../invoice/cc-spv.service';
 import { ServiceInfoResult } from '../../shared/models/serviceInfoResult.model';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-xcloud-service-details',
@@ -21,13 +22,17 @@ export class XCloudServiceDetailsComponent implements OnInit, OnChanges {
   coins:any;
   @Output() onXCloudSubmit = new EventEmitter();
 
+  onTryItOutSelected: Subject<any> = new Subject<any>();
+
   executing: boolean;
   callEXRDirectly: boolean = false;
   shortServiceName: string;
   description:string;
   servicePayType: string;
 
-  test:string;
+  curlTemplateEnterprise: string = 'curl -H "Accept: application/json" -H "Content-Type: application/json" -d ';
+  curlTemplateWallet: string = 'curl -H "Content-Type: application/json" -d \'{"jsonrpc":"1.0", "id":"curltext","method":"xrservice","params":["'
+  cliTemplate: string = 'blocknet-cli xrservice ';
 
   constructor(private modalService: NgbModal, private ccSpvService: CcSpvService ) {}
   
@@ -35,16 +40,28 @@ export class XCloudServiceDetailsComponent implements OnInit, OnChanges {
   parametervalues:string[];
 
   ngOnInit() {
+    this.shortServiceName = this.serviceName.replace("xrs::", "");
+    this.cliTemplate += this.shortServiceName;
     if(this.serviceInfo.service.parametersList){
       if(this.serviceInfo.service.parametersList.length > 0)
         this.parametervalues = new Array<string>(this.serviceInfo.service.parametersList.length);
+        this.curlTemplateEnterprise += JSON.stringify(this.serviceInfo.service.parametersList);
+        this.curlTemplateWallet += this.shortServiceName + ",";
+        this.curlTemplateWallet += this.serviceInfo.service.parametersList.join(",") + '"]';
+        this.cliTemplate += " " + this.serviceInfo.service.parametersList.join(" ");
+    }
+    else{
+      this.curlTemplateEnterprise += "[]";
+      this.curlTemplateWallet += this.shortServiceName + '"]';
     }
 
+    this.curlTemplateEnterprise += " http://" + this.serviceInfo.node.host + "/xrs/" + this.shortServiceName;
+    this.curlTemplateWallet += "}\' http://rpcuser:rpcpassword@localhost:41414";
+    
     if(this.serviceInfo.node.type == 'Enterprise'){
       this.callEXRDirectly = true;
     }
 
-    this.shortServiceName = this.serviceName.replace("xrs::", "");
     if(this.serviceInfo.service.fee > 0){
       this.servicePayType = 'Purchase service';
     }
@@ -78,6 +95,10 @@ export class XCloudServiceDetailsComponent implements OnInit, OnChanges {
       // this.openModal();
     }
     
+  }
+
+  onSelectTryItOut(){
+    this.onTryItOutSelected.next({title: 'Try it out'})
   }
 
   openModal(){

@@ -1,0 +1,22 @@
+.http-req{
+    font-size: 20px;
+    /* margin: 35px 0 -5px; */
+    word-break: break-word;
+}
+
+.http-req .http-req-verb{
+    font-size: 20px;
+    color:blue;
+    font-family: Menlo,Consolas,Monaco,monospace;
+    text-transform: uppercase;
+    margin-right: 10px;
+}
+
+.http-req .http-req-url {
+    font-family: Menlo,Consolas,Monaco,monospace;
+    font-size: 18px;
+}
+
+.api pre{
+    min-height: min-content;
+}

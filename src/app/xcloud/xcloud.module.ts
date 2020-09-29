@@ -8,7 +8,6 @@ import { BlocknetCommonModule } from '../blocknet-common/blocknet-common.module'
 import { TabsModule } from '../ui/tabs/tabs.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { XCloudService } from './shared/services/xcloud.service';
-import { EnterpriseXCloudService } from './shared/services/enterprise.xcloud.service';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { LoadingInterceptor } from '../ui/spinner/interceptors/loading.interceptor';
 import { SpinnerModule } from '../ui/spinner/spinner.module';
@@ -33,7 +32,6 @@ import { InvoiceModule } from '../invoice/invoice.module';
   ],
   providers:[
     XCloudService,
-    EnterpriseXCloudService,
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true }
   ]
 })

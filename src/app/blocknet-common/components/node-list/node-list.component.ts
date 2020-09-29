@@ -18,7 +18,8 @@ import { Component, OnInit, Input } from '@angular/core';
             </thead>
             <tbody>
               <tr *ngFor="let n of nodes">
-                <td><a [routerLink]="[n.nodePubKey]">{{n.nodePubKey}}</a></td>
+                <td class="snode"><a [routerLink]="[n.nodePubKey]">{{n.nodePubKey}}</a></td>
+                <td>{{n.host}}</td>
                 <td>{{n.type}}</td>
                 <td>{{n.score}}</td>
                 <td>{{n.feeDefault}}</td>
@@ -26,7 +27,7 @@ import { Component, OnInit, Input } from '@angular/core';
             </tbody>
           </table>
   `,
-  styles:[`td{ 
+  styles:[`td.snode{ 
             max-width: 0;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -44,12 +45,14 @@ export class NodeListComponent implements OnInit {
 
   columns:any=[
     {title: 'Snode Key', key: 'snodekey'},
+    {title: 'Host', key: 'host'},
     {title: 'Type', key: 'type'},
     {title: 'Score', key: 'score'},
     {title: 'Default Fee', key: 'defaultfee' }
   ];
 
   ngOnInit() {
+    console.log(this.nodes)
   }
 
 }

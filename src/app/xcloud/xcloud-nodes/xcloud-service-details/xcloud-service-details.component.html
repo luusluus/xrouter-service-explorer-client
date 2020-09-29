@@ -1,6 +1,6 @@
 <h1>XCloud Service</h1>
     <h5>{{ serviceName }}</h5>
-    <my-tabs>
+    <my-tabs [onNewTab]="onTryItOutSelected.asObservable()">
       <div class="row">
         <div class="col-9">
           <my-tab tabTitle="Readme">
@@ -25,6 +25,84 @@
             <h6>Client Request Limit</h6> 
             <p>{{serviceInfo.service.requestLimit}}</p>
           </my-tab>
+          <my-tab tabTitle="API">
+            <div *ngIf ="serviceInfo.service.description">
+              <p [innerHTML]="serviceInfo.service.description" style="white-space:pre-wrap"></p>
+            </div>
+            <div *ngIf="serviceInfo.service.help">
+              <p [innerHTML]="serviceInfo.service.help" style="white-space:pre-wrap"></p>
+            </div>
+            <div *ngIf="serviceInfo.node.type == 'Enterprise'">
+              <div class="api">
+                <h4>Enterprise</h4>
+                <h5>HTTP</h5>
+                <div class="http-req">
+                  <span class="http-req-verb">
+                    POST
+                  </span>
+                  <span class="http-req-url">
+                   http://{{serviceInfo.node.host}}/xrs/{{serviceName}}
+                  </span>
+                </div>
+                <blockquote><p>Sample Request</p></blockquote>
+                <button
+                      class="btn btn-outline-dark copy-code-btn"
+                      type="button"
+                      ngxClipboard
+                      [cbContent]="serviceCallResult | json"
+                      ngbTooltip="Copied" 
+                      triggers="click:blur"
+                >
+                    Copy
+                </button>
+                <pre class="sample-request" [innerHTML]="[curlTemplateEnterprise]"></pre>
+                <blockquote><p>Sample Response</p></blockquote>
+                <button class="btn btn-outline-primary" (click)="onSelectTryItOut()">Try it out!</button>
+                <br><br>
+                <h4>Own Wallet</h4>
+                <h5>HTTP</h5>
+                <div class="http-req">
+                  <span class="http-req-verb">
+                    POST
+                  </span>
+                  <span class="http-req-url">
+                   http://rpcuser:rpcpassword@localhost:41414
+                  </span>
+                </div>
+                <blockquote><p>Sample Request</p></blockquote>
+                <button
+                      class="btn btn-outline-dark copy-code-btn"
+                      type="button"
+                      ngxClipboard
+                      [cbContent]="serviceCallResult | json"
+                      ngbTooltip="Copied" 
+                      triggers="click:blur"
+                >
+                    Copy
+                </button>
+                <pre class="sample-request" [innerHTML]="[curlTemplateWallet]"></pre>
+                <blockquote><p>Sample Response</p></blockquote>
+                <button class="btn btn-outline-primary" (click)="onSelectTryItOut()">Try it out!</button>
+                <br><br>
+                <h5>Blocknet CLI</h5>
+                <blockquote><p>Sample Request</p></blockquote>
+                <button
+                      class="btn btn-outline-dark copy-code-btn"
+                      type="button"
+                      ngxClipboard
+                      [cbContent]="serviceCallResult | json"
+                      ngbTooltip="Copied" 
+                      triggers="click:blur"
+                >
+                    Copy
+                </button>
+                <pre class="sample-request" [innerHTML]="[cliTemplate]"></pre>
+                <blockquote><p>Sample Response</p></blockquote>
+                <button class="btn btn-outline-primary" (click)="onSelectTryItOut()">Try it out!</button>
+              </div>
+            </div>
+
+          </my-tab>
           <my-tab tabTitle="{{ servicePayType }}">
             <h3 *ngIf="serviceInfo.service.fee > 0 else free">Purchase the {{ serviceName }} service</h3>
             <ng-template #free>
@@ -39,8 +117,8 @@
               <h6>Help</h6>
               <p [innerHTML]="serviceInfo.service.help" style="white-space:pre-wrap"></p>
             </div>
-            <h6>Fee</h6>
-            <p>{{serviceInfo.service.fee}} BLOCK</p>
+            <!-- <h6>Fee</h6>
+            <p>{{serviceInfo.service.fee}} BLOCK</p> -->
             <div class="row">
               <div class="col-12">
                 <h4>Request</h4>
