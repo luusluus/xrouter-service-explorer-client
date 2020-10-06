@@ -13,6 +13,9 @@ import { LoadingInterceptor } from '../ui/spinner/interceptors/loading.intercept
 import { SpinnerModule } from '../ui/spinner/spinner.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { InvoiceModule } from '../invoice/invoice.module';
+import { HttpErrorInterceptor } from '../core/error/interceptors/http-error.interceptor';
+import { ErrorModule } from '../core/error/error.module';
+import { HttpResponseInterceptor } from './interceptors/http-response.interceptor';
 
 @NgModule({
   imports: [
@@ -20,6 +23,7 @@ import { InvoiceModule } from '../invoice/invoice.module';
     FormsModule,
     ReactiveFormsModule,
     NgbModule,
+    // ErrorModule,
     InvoiceModule,
     BlocknetCommonModule,
     
@@ -32,7 +36,8 @@ import { InvoiceModule } from '../invoice/invoice.module';
   ],
   providers:[
     XCloudService,
-    { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
+    // { provide: HTTP_INTERCEPTORS, useClass: HttpResponseInterceptor, multi: true },
   ]
 })
 export class XCloudModule { }

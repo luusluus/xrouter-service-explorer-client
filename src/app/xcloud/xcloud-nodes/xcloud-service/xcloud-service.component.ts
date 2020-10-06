@@ -3,7 +3,7 @@ import { Location } from '@angular/common';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { isNullOrUndefined } from 'util';
 import { NgForm } from '@angular/forms';
-import { finalize, takeUntil } from 'rxjs/operators';
+import { finalize, map, takeUntil } from 'rxjs/operators';
 import { Subject, Observable, forkJoin, Subscription } from 'rxjs';
 import { ServiceNodeService } from '../../../snode/shared/services/snode.service';
 import { XCloudService } from '../../shared/services/xcloud.service';
@@ -11,6 +11,7 @@ import { ServiceRequest } from '../../shared/models/servicerequest.model';
 import { BreadcrumbsService} from '../../../ui/breadcrumb/breadcrumbs.service';
 import { CcSpvService } from '../../../invoice/cc-spv.service';
 import { EnterpriseServiceRequest } from '../../shared/models/enterpriseServiceRequest.model';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-xcloud-service',
@@ -120,15 +121,15 @@ export class XCloudServiceComponent implements OnInit, OnDestroy {
       }
 
       this.xcloudService.ServiceEnterprise(serviceRequest)
-      .pipe(
-        finalize(() => {
-      }))  
       .subscribe(result => {
         this.serviceCallResult = {...result};
       },
-      error => {
-        console.log(error)
-        this.serviceCallResult = this.serviceCallResult = {...error};
+      (error: HttpErrorResponse) => {
+        const contentType = error.headers.get('Content-Type');
+        if(contentType.includes('text/plain'))
+          this.serviceCallResult = error.error.text;
+        else
+          this.serviceCallResult = error.error.message;
       });    
     }
     else{

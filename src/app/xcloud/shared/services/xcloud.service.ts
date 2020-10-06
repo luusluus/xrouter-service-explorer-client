@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, SkipSelf } from '@angular/core';
 import { HttpClient , HttpParams, HttpHeaders} from '@angular/common/http';
 import { BaseService } from '../../../shared/services/base.service';
 import { environment } from '../../../../environments/environment';
@@ -21,6 +21,22 @@ export class XCloudService extends BaseService{
   }
 
   ServiceEnterprise(request:EnterpriseServiceRequest){
+    // const httpOptions = {
+    //   headers: new HttpHeaders({
+    //     'Content-Type':  'application/json', //<- To SEND JSON
+    //     'Accept': 'text/plain, application/json',       //<- To ask for Text 
+    //     'Response-Type': 'text'             //<- b/c Angular understands text
+    //   })
+    // };
+
+    // const httpOptions = {
+    //   headers: new HttpHeaders({
+    //     'Accept': 'text/plain, application/json',
+    //     'Content-Type': 'application/application/json'
+    //   }),
+    //   responseType: 'text'
+    // };
+    
     const url = this.apiEndpoint + '/ServiceEnterprise';
     return this.http.post<any>(url, request);
   }

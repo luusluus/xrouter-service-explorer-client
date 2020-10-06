@@ -24,6 +24,7 @@ import {
               // server-side error
               errorMessage = error.error;
             }
+            console.log(errorMessage)
             return throwError(errorMessage);
           })
         )

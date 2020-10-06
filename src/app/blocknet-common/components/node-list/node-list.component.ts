@@ -52,7 +52,7 @@ export class NodeListComponent implements OnInit {
   ];
 
   ngOnInit() {
-    console.log(this.nodes)
+    // console.log(this.nodes)
   }
 
 }
