@@ -22,7 +22,6 @@ import { BlocknetService } from './blocknet-common/shared/services/blocknet.serv
 
 import { AppRoutingModule } from './app-routing.module';
 import { BreadcrumbModule } from './ui/breadcrumb/breadcrumb.module';
-import { HttpResponseInterceptor } from './xcloud/interceptors/http-response.interceptor';
 
 // const appInitializerFn = (appConfig: ConfigurationService) => {
 //   return () => {
